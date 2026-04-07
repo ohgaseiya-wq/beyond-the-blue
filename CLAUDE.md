@@ -14,7 +14,7 @@
 
 ## Brand Identity
 
-- **ドメイン**: Beyond the Blue®︎ 独自ドメイン（設定予定）
+- **ドメイン**: bluemover.jp（SWELL + SWELL Child）
 - **カラーパレット**:
   - Blue Light: `#6BB8E0`
   - Blue Mid: `#7B8EC8`
@@ -27,12 +27,40 @@
   - Mono: IBM Plex Mono (300/400)
 - **トーン**: 静謐、知的、余韻を残す。教えない・上から目線を排除
 
+## WordPress サイト（bluemover.jp）
+
+```bash
+# SSH + wp-cli でアクセス（CLAUDE.mdグローバル設定準拠）
+ssh xserver '/usr/bin/php8.1 /usr/bin/wp --path=/home/theacademy/bluemover.jp/public_html {command}'
+```
+
+| 項目 | 設定 |
+|------|------|
+| テーマ | SWELL + SWELL Child |
+| フロントページ | 固定ページ「Beyond the Blue」(ID:17) |
+| ブログページ | 固定ページ「Journal」(ID:18) |
+| プラグイン | SEO SIMPLE PACK / Simple Local Avatars / CloudSecure |
+
+### カテゴリ
+
+| カテゴリ | slug | 用途 |
+|---------|------|------|
+| Nologic Laws | nologic-laws | 葵が発見する見えない法則（デフォルト） |
+| Blue Movers Journey | blue-movers-journey | 葵の旅路・試練と発見 |
+| Ancient Meets Modern | ancient-meets-modern | 古典×現代成功哲学の交差点 |
+| Beyond the Blue Stories | stories | フィクション物語 |
+| World Notes | world-notes | 制作ノート・裏話 |
+
+### カスタムCSS
+- SWELL子テーマ `style.css` にBeyond the Blueブランドカラーを実装済み
+- CSS変数: `--btb-blue-light`, `--btb-blue-mid`, `--btb-purple`, `--btb-deep-navy` 等
+
 ## Key Assets
 
 | Asset | Path |
 |-------|------|
 | World Bible v1.0 | `knowledge/brand/world-bible-v1.html` |
-| サイト | `site/` |
+| カスタムCSS | サーバー上: `swell_child/style.css` |
 
 ## Storytelling Rules（7つの戒律）
 
