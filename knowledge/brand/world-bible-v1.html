@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond the Blue — World Bible v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-light: #6BB8E0;
+    --blue-mid: #7B8EC8;
+    --purple: #9B7BB8;
+    --deep-navy: #0A0E1A;
+    --dark-surface: #0F1322;
+    --dark-card: #151929;
+    --dark-border: #1E2340;
+    --text-primary: #E8EAF0;
+    --text-secondary: #8B90A8;
+    --text-muted: #5A5F78;
+    --accent-warm: #C8A87B;
+    --gradient-brand: linear-gradient(135deg, #6BB8E0, #7B8EC8, #9B7BB8);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Zen Kaku Gothic New', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep-navy);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(107,184,224,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(155,123,184,0.06) 0%, transparent 50%);
+    animation: nebula 30s ease-in-out infinite alternate;
+  }
+
+  @keyframes nebula {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-2%, -1%) rotate(3deg); }
+  }
+
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 1s 0.3s ease forwards;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 1.1;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 1s 0.5s ease forwards;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 1s 0.7s ease forwards;
+  }
+
+  .hero-version {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    border: 1px solid var(--dark-border);
+    padding: 0.5rem 1.5rem;
+    opacity: 0; animation: fadeUp 1s 0.9s ease forwards;
+  }
+
+  .hero-line {
+    width: 1px; height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--blue-mid), transparent);
+    margin-top: 3rem;
+    opacity: 0; animation: fadeUp 1s 1.1s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,26,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 1rem 2rem;
+    display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
+  }
+
+  .nav a {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav a:hover { color: var(--blue-light); }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-number {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+  }
+
+  .divider {
+    width: 60px; height: 1px;
+    background: var(--gradient-brand);
+    margin: 4rem 0;
+  }
+
+  .text-block {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin-bottom: 2rem;
+  }
+
+  .quote-block {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    border-left: 2px solid var(--blue-mid);
+    padding-left: 1.5rem;
+    margin: 3rem 0;
+    max-width: 600px;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .card {
+    padding: 2rem;
+    border: 1px solid var(--dark-border);
+    background: var(--dark-card);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .card-accent {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--blue-light);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ===== CHARACTER ===== */
+  .char-profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin: 2rem 0;
+    align-items: start;
+  }
+
+  .char-visual {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .char-silhouette {
+    width: 120px;
+    height: 200px;
+    position: relative;
+  }
+
+  .char-silhouette .body {
+    width: 60px; height: 100px;
+    background: rgba(107,184,224,0.08);
+    border: 1px solid rgba(107,184,224,0.15);
+    border-radius: 4px 4px 0 0;
+    position: absolute;
+    bottom: 40px; left: 30px;
+  }
+
+  .char-silhouette .hood {
+    width: 70px; height: 45px;
+    background: rgba(107,184,224,0.06);
+    border: 1px solid rgba(107,184,224,0.12);
+    border-radius: 50% 50% 0 0;
+    position: absolute;
+    top: 15px; left: 25px;
+  }
+
+  .char-silhouette .head {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(107,184,224,0.2);
+    border-radius: 50%;
+    position: absolute;
+    top: 0; left: 42px;
+  }
+
+  .char-silhouette .eyes {
+    position: absolute;
+    top: 12px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+  }
+
+  .char-silhouette .eye {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    box-shadow: 0 0 8px var(--blue-light), 0 0 20px rgba(107,184,224,0.3);
+    animation: eyeGlow 4s ease-in-out infinite;
+  }
+
+  @keyframes eyeGlow {
+    0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--blue-light); }
+    50% { opacity: 1; box-shadow: 0 0 15px var(--blue-light), 0 0 30px rgba(107,184,224,0.4); }
+  }
+
+  .char-silhouette .legs {
+    position: absolute;
+    bottom: 0; left: 35px;
+    display: flex; gap: 10px;
+  }
+
+  .char-silhouette .leg {
+    width: 18px; height: 42px;
+    background: rgba(107,184,224,0.06);
+    border: 1px solid rgba(107,184,224,0.1);
+  }
+
+  .char-visual-label {
+    position: absolute;
+    bottom: 1rem; left: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .char-details { }
+
+  .char-trait {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--dark-border);
+  }
+
+  .char-trait-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .char-trait-value {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  /* ===== STORY ARC ===== */
+  .arc-timeline {
+    position: relative;
+    padding-left: 3rem;
+    margin: 2rem 0;
+  }
+
+  .arc-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--blue-light), var(--blue-mid), var(--purple));
+  }
+
+  .arc-phase {
+    position: relative;
+    padding: 1.5rem 0 2.5rem 0;
+  }
+
+  .arc-phase::before {
+    content: '';
+    position: absolute;
+    left: -3rem; top: 1.8rem;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    box-shadow: 0 0 10px rgba(123,142,200,0.4);
+    transform: translateX(-3.5px);
+  }
+
+  .arc-phase-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--blue-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .arc-phase-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .arc-phase-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ===== LAWS ===== */
+  .law-item {
+    padding: 2rem;
+    border: 1px solid var(--dark-border);
+    background: var(--dark-card);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .law-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gradient-brand);
+  }
+
+  .law-number {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .law-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .law-sources {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--blue-light);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .law-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ===== EPISODE TEMPLATE ===== */
+  .episode-template {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .beat {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(30,35,64,0.5);
+  }
+
+  .beat:last-child { border-bottom: none; }
+
+  .beat-time {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--blue-light);
+    letter-spacing: 0.1em;
+    padding-top: 0.2rem;
+  }
+
+  .beat-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .beat-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .beat-aoi {
+    font-size: 0.75rem;
+    color: var(--accent-warm);
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+
+  /* ===== RULES ===== */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .rule-list {
+    padding: 1.5rem;
+    border: 1px solid var(--dark-border);
+  }
+
+  .rule-list h4 {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .rule-list.do h4 { color: var(--blue-light); border-top: 2px solid var(--blue-light); padding-top: 1rem; }
+  .rule-list.dont h4 { color: #E05A6B; border-top: 2px solid #E05A6B; padding-top: 1rem; }
+
+  .rule-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    list-style: none;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .rule-list.do li::before { content: '\2713'; position: absolute; left: 0; color: var(--blue-light); font-size: 0.75rem; }
+  .rule-list.dont li::before { content: '\2715'; position: absolute; left: 0; color: #E05A6B; font-size: 0.75rem; }
+
+  /* ===== TABLE ===== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+  }
+
+  .data-table th {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--dark-border);
+  }
+
+  .data-table td {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid rgba(30,35,64,0.5);
+    vertical-align: top;
+  }
+
+  .data-table td:first-child {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--dark-border);
+  }
+
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .char-profile { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .nav { gap: 1rem; padding: 0.75rem 1rem; }
+    .nav a { font-size: 0.55rem; }
+    .section { padding: 4rem 1.25rem; }
+    .beat { grid-template-columns: 60px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">World Bible</div>
+    <h1 class="hero-title">Beyond the Blue</h1>
+    <p class="hero-subtitle">The journey of Aoi — a Blue Mover — into the Nologic</p>
+    <div class="hero-version">WORLD BIBLE v1.0 — APRIL 2026</div>
+  </div>
+  <div class="hero-line"></div>
+</section>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a href="#premise">Premise</a>
+  <a href="#bluemover">Blue Mover</a>
+  <a href="#aoi">Aoi</a>
+  <a href="#world">World Rules</a>
+  <a href="#nologic">Nologic Laws</a>
+  <a href="#arc">Series Arc</a>
+  <a href="#episode">Episode Design</a>
+  <a href="#bible-rules">Storytelling Rules</a>
+</nav>
+
+<!-- ===== 01. PREMISE ===== -->
+<section id="premise" class="section">
+  <div class="section-number">01</div>
+  <h2 class="section-title">Premise</h2>
+  <p class="section-subtitle">The world we are building</p>
+
+  <p class="text-block">
+    AIが効率と論理を人間から奪い取っていく時代。生産性、最適化、合理的意思決定——それらはすべて機械の領域になった。人間に残されたのは、一見「非論理的」に見える力。直感、信念、意志、意識の力。
+  </p>
+
+  <div class="quote-block">
+    "それは非科学ではない。<br>
+    古代の哲学者たちが数千年かけて体系化し、<br>
+    量子力学が証明し始めている<br>
+    ——もう一つの法則体系だ。"
+  </div>
+
+  <p class="text-block">
+    Beyond the Blue は、この「もう一つの法則体系」を、一人の若い旅人・葵（あおい）の物語を通じて描くメディア。葵は天才でも覚者でもない。泥臭く転びながら、見えない力に触れ、少しずつ変容していく。視聴者は葵に自分を重ね、「学ぶ」のではなく「一緒に発見する」。
+  </p>
+
+  <div class="divider"></div>
+
+  <div class="label">CORE THESIS — 全コンテンツの根底に流れる一文</div>
+  <div class="quote-block" style="border-left-color: var(--purple);">
+    "論理の先に、もう一つの法則がある。<br>
+    古代人はそれを知っていた。<br>
+    成功者はそれを使っている。<br>
+    AIには、それが見えない。"
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">POSITIONING MAP</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-accent">WHAT WE ARE</div>
+      <div class="card-title">フィクションで思想を体験させるメディア</div>
+      <div class="card-desc">哲学・成功法則・スピリチュアルの叡智を、葵の物語に溶かし込み、視聴者に「知的な感動」を届ける。日本版Pursuit of Wonder × キャラクターIP。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">WHAT WE ARE NOT</div>
+      <div class="card-title">解説・説教・スピリチュアル啓蒙</div>
+      <div class="card-desc">「〇〇の法則を解説します」は絶対にやらない。「皆さん知ってましたか？」も言わない。葵がそれを体験し、視聴者がそこから何を受け取るかは、視聴者に委ねる。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">AUDIENCE</div>
+      <div class="card-title">知的好奇心が高い20〜35歳</div>
+      <div class="card-desc">自己啓発に興味はあるが「キラキラ系」に疲れた層。論理だけでは掴めない何かを求めている層。夜、一人の時間に見たくなるコンテンツ。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02. BLUE MOVER ===== -->
+<section id="bluemover" class="section">
+  <div class="section-number">02</div>
+  <h2 class="section-title">Blue Mover</h2>
+  <p class="section-subtitle">The archetype at the heart of everything</p>
+
+  <div class="quote-block">
+    "Blue Mover ——<br>
+    青の向こう側へ動き続ける者。<br>
+    答えが見えなくても、止まらない者。<br>
+    論理が尽きた場所から、歩き始める者。"
+  </div>
+
+  <p class="text-block">
+    Blue Mover は Beyond the Blue の世界における「主人公の原型」であり、このメディア全体を貫く生き方の哲学である。サービスの名前ではない。在り方の名前だ。
+  </p>
+
+  <div class="divider"></div>
+
+  <div class="label">BLUE MOVER の定義</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-accent">BLUE</div>
+      <div class="card-title">見える世界の「端」</div>
+      <div class="card-desc">論理、効率、合理性——AIが支配する「見える世界」の色。空の青、海の青。どこまでも広がっているように見えるが、その先に「何か」がある。Blueは終点ではなく、境界線である。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">MOVER</div>
+      <div class="card-title">境界線を越えて動く者</div>
+      <div class="card-desc">多くの人はBlueの手前で立ち止まる。合理的な判断だから。しかしBlue Moverは、論理が尽きた場所から歩き始める者。泥臭く、不格好に、でも確実に「向こう側」へ動き続ける存在。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">BLUE MOVER — 3つの性質</div>
+  <div class="card-grid">
+    <div class="card" style="border-left: 3px solid var(--blue-light);">
+      <div class="card-accent">性質 01</div>
+      <div class="card-title">泥臭さ（Grit）</div>
+      <div class="card-desc">Blue Moverはスマートではない。何度も転ぶ。でも立ち上がる。その泥臭さそのものが、ノーロジックの法則を起動させる鍵になる。キラキラした成功者ではなく、雑草のように這い上がる者。これが葵の本質。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--blue-mid);">
+      <div class="card-accent">性質 02</div>
+      <div class="card-title">問い続ける力（Quest）</div>
+      <div class="card-desc">Blue Moverは「答え」を持っていない。でも「問い」を持っている。なぜ？ どうして？ 本当に？——この「問い」が旅の燃料になる。問うことをやめた瞬間、Blueの手前で止まってしまう。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--purple);">
+      <div class="card-accent">性質 03</div>
+      <div class="card-title">見えない力への信頼（Trust）</div>
+      <div class="card-desc">論理で証明できないものを、それでも信じる力。直感、意識の力、言葉の創造力。古代の賢者たちが知っていたこと。量子力学が裏づけ始めていること。Blue Moverは、それを「理解」するのではなく「体験」を通じて「信頼」する。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">BLUE MOVER — 物語の中での機能</div>
+  <p class="text-block">
+    葵はBlue Moverの象徴であり、視聴者にとっての「鏡」である。視聴者は葵の旅を見ながら、自分自身の中のBlue Moverに気づく。
+  </p>
+  <p class="text-block">
+    重要なのは、Blue Moverは「完成した状態」ではないということ。Blue Moverであることは、到達点ではなく「動き続けていること」そのもの。だからこそ葵は悟りに到達しない。永遠にBlue Moverであり続ける。
+  </p>
+
+  <div class="quote-block" style="border-left-color: var(--purple);">
+    "Blue Moverとは、目的地のことではない。<br>
+    歩き続けている、という状態のことだ。"
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">BLUE MOVER — ブランドとしての拡張</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Function</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>物語層</td>
+        <td>葵 = Blue Moverの体現者。視聴者が感情移入し「自分もBlue Moverでありたい」と感じるIPの核。</td>
+      </tr>
+      <tr>
+        <td>コミュニティ層</td>
+        <td>ファンが自らを「Blue Mover」と称する文化の醸成。共通言語・アイデンティティの基盤。</td>
+      </tr>
+      <tr>
+        <td>グッズ・IP層</td>
+        <td>「Blue Mover」ロゴ、葵モチーフのLINEスタンプ、アパレル、コラボ等。キャラクターIPとしての収益化。</td>
+      </tr>
+      <tr>
+        <td>事業接続層</td>
+        <td>「あなたもBlue Moverとして次のステージへ」——Blue Moverプログラム等への自然な導線。押し売りではなく、世界観の延長として。</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 03. AOI ===== -->
+<section id="aoi" class="section">
+  <div class="section-number">03</div>
+  <h2 class="section-title">葵 — Aoi</h2>
+  <p class="section-subtitle">The Blue Mover we follow</p>
+
+  <div class="char-profile">
+    <div class="char-visual">
+      <div class="char-silhouette">
+        <div class="head">
+          <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+          </div>
+        </div>
+        <div class="hood"></div>
+        <div class="body"></div>
+        <div class="legs">
+          <div class="leg"></div>
+          <div class="leg"></div>
+        </div>
+      </div>
+      <div class="char-visual-label">CONCEPT SILHOUETTE — NOT FINAL DESIGN</div>
+    </div>
+
+    <div class="char-details">
+      <div class="char-trait">
+        <div class="char-trait-label">NAME</div>
+        <div class="char-trait-value">葵（あおい / Aoi）</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">GENDER</div>
+        <div class="char-trait-value">中性的。男性にも女性にも見える。視聴者が自由に投影できる存在。</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">AGE</div>
+        <div class="char-trait-value">20代前半のイメージ。具体的な年齢は設定しない。</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">APPEARANCE</div>
+        <div class="char-trait-value">フード付きパーカー（使い込まれたもの）。擦り切れたスニーカー。小柄で華奢だが、姿勢は常に前を向いている。全体的にモノトーンだが、目だけが青く光っている。</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">VOICE</div>
+        <div class="char-trait-value">葵自身は喋らない。すべてナレーターが代弁。葵の内面は「目の光の変化」と「行動」だけで表現する。</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">ARCHETYPE</div>
+        <div class="char-trait-value">Blue Mover —— 青の向こう側へ動き続ける者。天才でも覚者でもなく、雑草魂で泥臭く前に進むチャレンジャー。ヒーローズ・ジャーニーの主人公であり、すべての視聴者が自分を投影できるBlue Moverの象徴。</div>
+      </div>
+      <div class="char-trait">
+        <div class="char-trait-label">CORE DRIVE</div>
+        <div class="char-trait-value">「何かを探している」が、何を探しているか本人もわからない。それを見つける旅が、シリーズ全体の推進力。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">AOI'S CHARACTER RULES</div>
+  <div class="rules-grid">
+    <div class="rule-list do">
+      <h4>Always</h4>
+      <ul>
+        <li>転んでも必ず立ち上がる（雑草魂の象徴）</li>
+        <li>「なぜ？」という疑問を目の表情で表現する</li>
+        <li>師に出会ったとき、最初は理解できない顔をする</li>
+        <li>気づきの瞬間、目の光が青から紫にグラデーションする</li>
+        <li>一人の時間に、空を見上げるカットを入れる</li>
+      </ul>
+    </div>
+    <div class="rule-list dont">
+      <h4>Never</h4>
+      <ul>
+        <li>カメラに向かって語りかけない</li>
+        <li>笑顔を多用しない（稀な笑顔が輝く設計）</li>
+        <li>超人的な能力を発揮しない</li>
+        <li>最初から「答え」を知っている描写をしない</li>
+        <li>キラキラした成功者として描かない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">SUPPORTING CHARACTERS（将来拡張）</div>
+  <p class="text-block">
+    葵の旅には「師」が登場する。ただし師は毎回異なり、常に予想外の形で現れる。老人、子供、動物、碑文、風景、あるいは「沈黙」そのもの。師は答えを教えない。問いを残して消える。
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>師の型</th>
+        <th>Description</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>老賢者</td>
+        <td>古典的な師。少ない言葉で核心を突く。</td>
+        <td>山頂で一杯の茶を差し出す老人</td>
+      </tr>
+      <tr>
+        <td>子供</td>
+        <td>無垢な問いが、葵の固定観念を壊す。</td>
+        <td>「なんで大人は空を見ないの？」と聞く子供</td>
+      </tr>
+      <tr>
+        <td>失敗者</td>
+        <td>すべてを失った者が、逆説的な真理を語る。</td>
+        <td>全財産を失って笑っている商人</td>
+      </tr>
+      <tr>
+        <td>自然/無生物</td>
+        <td>言葉を持たない「師」。葵が自ら読み取る。</td>
+        <td>嵐の後の静けさ、枯れた木に咲く一輪の花</td>
+      </tr>
+      <tr>
+        <td>自分自身</td>
+        <td>鏡、水面、影——葵が自分と対話する。</td>
+        <td>水面に映る「もう一人の葵」</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 03. WORLD RULES ===== -->
+<section id="world" class="section">
+  <div class="section-number">04</div>
+  <h2 class="section-title">World Rules</h2>
+  <p class="section-subtitle">The laws of our universe</p>
+
+  <p class="text-block">
+    Beyond the Blueの世界は現実世界とほぼ同じだが、いくつかの「見えないルール」が存在する。これらのルールは物語の中で明示されることはなく、ストーリーの構造や演出の中に暗黙的に織り込まれる。
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-accent">RULE 01</div>
+      <div class="card-title">意識は物質に先行する</div>
+      <div class="card-desc">葵が何かを「本当に」信じた瞬間、世界が微かに変化する。演出上は、背景色のシフト、光の方向の変化、風の動きで表現。視聴者には「気のせいかもしれない」レベルで描く。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">RULE 02</div>
+      <div class="card-title">師は準備ができた者の前に現れる</div>
+      <div class="card-desc">葵が問いを持った瞬間に、答えの断片が世界のどこかに現れる。ただし葵がそれに気づけるかどうかは、葵の内面の状態による。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">RULE 03</div>
+      <div class="card-title">痛みは通過儀礼である</div>
+      <div class="card-desc">葵の成長は常に「痛み」を伴う。失敗、喪失、孤独。しかし痛みの直後に、必ず「静寂」が訪れ、その静寂の中で気づきが生まれる。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">RULE 04</div>
+      <div class="card-title">答えは問いの中にある</div>
+      <div class="card-desc">師は決して「答え」を直接教えない。問いを投げ、沈黙し、去る。答えは葵が自ら見つけるか、視聴者が見つけるか、あるいは永遠に開かれたままで終わる。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">RULE 05</div>
+      <div class="card-title">青の向こう側は、常に存在する</div>
+      <div class="card-desc">日常の風景の中に「青い光」が差し込む瞬間がある。それは「見えない法則」が顕在化した瞬間。葵がそれに気づいたとき、世界が一枚だけ深くなる。</div>
+    </div>
+    <div class="card">
+      <div class="card-accent">RULE 06</div>
+      <div class="card-title">旅に終わりはない</div>
+      <div class="card-desc">葵は「悟り」に到達しない。永遠の旅人であり続ける。各エピソードで一歩前に進むが、新たな問いが生まれ、旅は続く。完成しないからこそ、視聴者は付いてくる。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 04. NOLOGIC LAWS ===== -->
+<section id="nologic" class="section">
+  <div class="section-number">05</div>
+  <h2 class="section-title">The Nologic Laws</h2>
+  <p class="section-subtitle">The invisible laws Aoi discovers</p>
+
+  <p class="text-block">
+    以下は、葵が旅を通じて一つずつ発見していく「ノーロジックの法則」のマスターリスト。各法則は、古典（仏教・ヴェーダ・ユダヤ教・ストア哲学）と、現代の成功哲学（ロビンズ・ヒル・ブランソン等）の交差点に位置する。各エピソードは、この法則の一つを「葵の体験」として物語化する。
+  </p>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 001</div>
+    <div class="law-name">意識先行の法則</div>
+    <div class="law-sources">仏教「一切唯心造」× ナポレオン・ヒル「思考は現実化する」× 量子力学「観測者効果」</div>
+    <div class="law-desc">現実は意識の投影である。葵が「見方」を変えた瞬間に、目の前の状況が変わる。物理的に何も変わっていないのに、世界が違って見える体験。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 002</div>
+    <div class="law-name">手放しの逆説</div>
+    <div class="law-sources">老子「無為自然」× ストア哲学「コントロールの二分法」× ロビンズ「State管理」</div>
+    <div class="law-desc">必死に掴もうとするほど逃げていくものがある。葵が「手放す」ことで初めて、求めていたものが向こうからやってくる体験。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 003</div>
+    <div class="law-name">反復の鍛錬</div>
+    <div class="law-sources">禅「只管打坐」× ヴェーダ「タパス（苦行）」× ブランソン「Linchpinの反復」</div>
+    <div class="law-desc">才能ではなく、同じことを繰り返す中に突破がある。葵が同じ壁に何度もぶつかり、ある日突然「壁が消える」体験。反復の中に宿る神秘。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 004</div>
+    <div class="law-name">谷底の贈り物</div>
+    <div class="law-sources">ユダヤ教「試練は祝福」× キャンベル「深淵への降下」× ロビンズ「人生最悪の日が最良の日になる」</div>
+    <div class="law-desc">最も暗い場所でこそ、最も重要なものが見つかる。葵がすべてを失ったと感じた瞬間に、「見えない法則」の最初の光に触れる。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 005</div>
+    <div class="law-name">鏡面の真実</div>
+    <div class="law-sources">仏教「縁起」× ユング「投影」× ジェイ・エイブラハム「卓越の戦略」</div>
+    <div class="law-desc">他者は自分の鏡である。葵が誰かに怒りを感じたとき、実はそれが自分自身への怒りだと気づく体験。関係性の中に隠された自己認識。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 006</div>
+    <div class="law-name">言葉の創造力</div>
+    <div class="law-sources">ユダヤ教「神は言葉で世界を創った」× ヴェーダ「マントラ」× ヒル「自己暗示」</div>
+    <div class="law-desc">言葉は現実を形作る道具である。葵が発した（心の中の）一つの言葉が、物語の展開を変える体験。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 007</div>
+    <div class="law-name">空（くう）のちから</div>
+    <div class="law-sources">仏教「空」× 老子「無用の用」× Adao「Challenge Secrets — 余白の力」</div>
+    <div class="law-desc">「何もない」ことに力がある。葵が行動を止め、沈黙の中に身を置いたとき、最も深い洞察が訪れる体験。</div>
+  </div>
+
+  <div class="law-item">
+    <div class="law-number">NOLOGIC LAW 008</div>
+    <div class="law-name">与えることの回帰</div>
+    <div class="law-sources">ヴェーダ「ダーナ（布施）」× ユダヤ教「ティクン・オラム」× エイブラハム「先に価値を与える」</div>
+    <div class="law-desc">受け取りたければ、先に与える。葵が自分の持つわずかなものを他者に分け与えた瞬間、予想もしなかった形で返ってくる体験。</div>
+  </div>
+
+  <p class="text-block" style="margin-top:2rem; font-style:italic; color:var(--text-muted);">
+    ※このリストは拡張可能。シリーズが続く限り新しい「法則」を追加できる。各法則は必ず「古典×現代成功哲学」の交差点に位置させる。
+  </p>
+</section>
+
+<!-- ===== 05. SERIES ARC ===== -->
+<section id="arc" class="section">
+  <div class="section-number">06</div>
+  <h2 class="section-title">Series Arc</h2>
+  <p class="section-subtitle">Aoi's great journey — the macro structure</p>
+
+  <p class="text-block">
+    シリーズ全体は、キャンベルの「ヒーローズ・ジャーニー」をベースにした大きな旅の構造を持つ。ただし葵は「完成」しない。各フェーズで一段階深くなるが、新たな旅が始まる螺旋構造。
+  </p>
+
+  <div class="arc-timeline">
+    <div class="arc-phase">
+      <div class="arc-phase-label">PHASE 1 — ORDINARY WORLD（EP.1〜10）</div>
+      <div class="arc-phase-title">日常の崩壊</div>
+      <div class="arc-phase-desc">葵は効率と論理の世界で生きている。うまくいかない。努力しても結果が出ない。「正しいはずなのに、なぜ？」という疑問。ある日、日常の中に「青い光」が差す。初めての違和感。</div>
+    </div>
+    <div class="arc-phase">
+      <div class="arc-phase-label">PHASE 2 — CALL TO ADVENTURE（EP.11〜20）</div>
+      <div class="arc-phase-title">見えない世界への招待</div>
+      <div class="arc-phase-desc">最初の「師」に出会う。師は答えを教えず、問いだけを残す。葵は戸惑い、怒り、それでも気になって旅を始める。論理が通用しない世界の入口。</div>
+    </div>
+    <div class="arc-phase">
+      <div class="arc-phase-label">PHASE 3 — TRIALS（EP.21〜50）</div>
+      <div class="arc-phase-title">試練と発見</div>
+      <div class="arc-phase-desc">シリーズの主軸。各エピソードで一つの「ノーロジックの法則」に触れる。失敗→気づき→小さな変容。仲間や師との出会いと別れ。泥臭く転びながらも前に進む葵。</div>
+    </div>
+    <div class="arc-phase">
+      <div class="arc-phase-label">PHASE 4 — THE ABYSS（EP.51〜60）</div>
+      <div class="arc-phase-title">深淵への降下</div>
+      <div class="arc-phase-desc">すべてを失う。信じていたものが崩れる。暗闇の中で一人になる。しかし、その底で「谷底の贈り物」に触れる。最も暗い場所で最も重要な気づきを得る。</div>
+    </div>
+    <div class="arc-phase">
+      <div class="arc-phase-label">PHASE 5 — RETURN（EP.61〜）</div>
+      <div class="arc-phase-title">帰還と新たな旅</div>
+      <div class="arc-phase-desc">変容した葵が日常に戻る。しかし世界が違って見える。そして新たな問いが生まれ、次の旅が始まる。完結しない。螺旋的に深くなり続ける。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 06. EPISODE DESIGN ===== -->
+<section id="episode" class="section">
+  <div class="section-number">07</div>
+  <h2 class="section-title">Episode Design</h2>
+  <p class="section-subtitle">How each story is built</p>
+
+  <div class="label">SHORT FORMAT（60秒）— TikTok / Reels / Shorts</div>
+  <div class="episode-template">
+    <div class="beat">
+      <div class="beat-time">0-5s</div>
+      <div>
+        <div class="beat-name">HOOK</div>
+        <div class="beat-desc">衝撃的なビジュアル or テキスト一文。声なし。</div>
+        <div class="beat-aoi">葵：暗闇の中に立っている / 走っている / 倒れている</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">5-15s</div>
+      <div>
+        <div class="beat-name">SETUP</div>
+        <div class="beat-desc">葵の状況を最小限の描写で提示。ナレーション開始。</div>
+        <div class="beat-aoi">葵：壁にぶつかっている / 何かを探している / 一人で歩いている</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">15-40s</div>
+      <div>
+        <div class="beat-name">ENCOUNTER</div>
+        <div class="beat-desc">師 or 出来事との遭遇。「見えない法則」の断片に触れる。</div>
+        <div class="beat-aoi">葵：目が見開く / 立ち止まる / 振り返る</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">40-55s</div>
+      <div>
+        <div class="beat-name">SHIFT</div>
+        <div class="beat-desc">気づきの瞬間。葵の目の色がシフト。世界の色味が変わる。</div>
+        <div class="beat-aoi">葵：目が青→紫にグラデーション / 表情が微かに変化</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">55-60s</div>
+      <div>
+        <div class="beat-name">SILENCE</div>
+        <div class="beat-desc">2-3秒の「間」。ロゴフェードイン。答えは言わない。余韻で終わる。</div>
+        <div class="beat-aoi">葵：歩き始める / 空を見上げる / 画面外へ消える</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="label" style="margin-top:3rem;">LONG FORMAT（10-15分）— YouTube</div>
+  <div class="episode-template">
+    <div class="beat">
+      <div class="beat-time">0-2min</div>
+      <div>
+        <div class="beat-name">ORDINARY WORLD</div>
+        <div class="beat-desc">葵の日常。何かがうまくいっていない。具体的な「壁」の描写。</div>
+        <div class="beat-aoi">葵：繰り返しの日常 / 疲弊 / 空虚な表情</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">2-4min</div>
+      <div>
+        <div class="beat-name">DISRUPTION</div>
+        <div class="beat-desc">予期しない出来事。師の出現。あるいは日常の中の「違和感」。</div>
+        <div class="beat-aoi">葵：戸惑い / 拒絶 / しかし気になって立ち止まる</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">4-8min</div>
+      <div>
+        <div class="beat-name">TRIAL</div>
+        <div class="beat-desc">葵が「見えない法則」を実践しようとして失敗する。論理で理解しようとして壁にぶつかる。泥臭い格闘。</div>
+        <div class="beat-aoi">葵：挑戦→失敗→苛立ち→再挑戦→また失敗</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">8-11min</div>
+      <div>
+        <div class="beat-name">EPIPHANY</div>
+        <div class="beat-desc">気づきの瞬間。論理を手放した瞬間に、法則が「体験として」降りてくる。ビジュアル的にも最も美しいシーン。</div>
+        <div class="beat-aoi">葵：目の色がシフト / 周囲の世界が一瞬だけ「青の向こう側」に変わる</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">11-14min</div>
+      <div>
+        <div class="beat-name">RETURN</div>
+        <div class="beat-desc">変容した葵が日常に戻る。同じ景色が違って見える。しかし新たな問いが生まれる。</div>
+        <div class="beat-aoi">葵：歩き続ける / 前を向いている / 目に新しい光</div>
+      </div>
+    </div>
+    <div class="beat">
+      <div class="beat-time">14-15min</div>
+      <div>
+        <div class="beat-name">OPEN QUESTION</div>
+        <div class="beat-desc">ナレーターが問いを投げかけて終わる。答えない。視聴者の中で反響させる。</div>
+        <div class="beat-aoi">葵：フレームアウト / 余韻の「間」/ ロゴ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 07. STORYTELLING RULES ===== -->
+<section id="bible-rules" class="section">
+  <div class="section-number">08</div>
+  <h2 class="section-title">Storytelling Rules</h2>
+  <p class="section-subtitle">The commandments of our world</p>
+
+  <div class="card-grid" style="grid-template-columns: 1fr;">
+    <div class="card" style="border-left: 3px solid var(--blue-light);">
+      <div class="card-accent">COMMANDMENT 01</div>
+      <div class="card-title">Show, Never Tell</div>
+      <div class="card-desc">「引き寄せの法則とは〇〇です」とは絶対に言わない。葵がそれを体験するシーンを描き、視聴者が自分で「ああ、これか」と気づく設計にする。名前すら出さなくていい。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--blue-mid);">
+      <div class="card-accent">COMMANDMENT 02</div>
+      <div class="card-title">Pain Before Wisdom</div>
+      <div class="card-desc">気づきの前には必ず痛みがある。「簡単にわかりました！」は絶対に描かない。泥臭さ、格闘、失敗を丁寧に描くことで、気づきの瞬間のカタルシスが生まれる。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--purple);">
+      <div class="card-accent">COMMANDMENT 03</div>
+      <div class="card-title">End with a Question</div>
+      <div class="card-desc">すべてのエピソードは「問い」で終わる。答えを提示しない。余韻と沈黙で終わらせる。視聴者がコメント欄で自分の解釈を語り始める——それがエンゲージメントの源泉になる。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--accent-warm);">
+      <div class="card-accent">COMMANDMENT 04</div>
+      <div class="card-title">Ancient Meets Modern</div>
+      <div class="card-desc">すべてのエピソードの裏側に「古典×現代成功哲学」の構造を持つ。ただしそれを表に出さない。概要欄に「この物語の背景にある思想」として補足するのはOK。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--blue-light);">
+      <div class="card-accent">COMMANDMENT 05</div>
+      <div class="card-title">The Mud is the Message</div>
+      <div class="card-desc">泥臭さこそが葵の魅力。スマートに問題を解決する姿ではなく、何度も転び、それでも立ち上がる姿を描く。視聴者が「自分もこうありたい」と感じるのは、完璧なヒーローではなく、不完全だが諦めない存在。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--blue-mid);">
+      <div class="card-accent">COMMANDMENT 06</div>
+      <div class="card-title">Silence is a Character</div>
+      <div class="card-desc">「沈黙」を演出として積極的に使う。ナレーションが止まる瞬間、BGMが消える瞬間。その「間」に最も重要なメッセージが宿る。動画の中に最低1回は「3秒以上の完全な静寂」を入れる。</div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--purple);">
+      <div class="card-accent">COMMANDMENT 07</div>
+      <div class="card-title">No Guru Energy</div>
+      <div class="card-desc">Beyond the Blueは「教える」メディアではない。「一緒に探す」メディアである。ナレーターも全知の語り手ではなく、葵の旅を静かに見守る「同行者」の立場で語る。上から目線は絶対に排除する。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="label">NARRATION TONE REFERENCE</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Scene Type</th>
+        <th>Narration Style</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>日常の描写</td>
+        <td>淡々と、距離を持って。新聞記事のような客観性。</td>
+        <td>「朝が来た。葵はまた同じ道を歩いていた。」</td>
+      </tr>
+      <tr>
+        <td>師の登場</td>
+        <td>やや緊張感を含む。リズムが変わる。</td>
+        <td>「その老人は、何も持っていなかった。何も——ただ一つのものを除いて。」</td>
+      </tr>
+      <tr>
+        <td>試練の最中</td>
+        <td>息遣いが感じられるテンポ。短文の連続。</td>
+        <td>「倒れた。立ち上がった。また倒れた。手が震えていた。」</td>
+      </tr>
+      <tr>
+        <td>気づきの瞬間</td>
+        <td>ゆっくりと。一語一語に重みを持たせる。</td>
+        <td>「——そのとき、葵は理解した。理解したのではない。感じた。」</td>
+      </tr>
+      <tr>
+        <td>エンディング</td>
+        <td>問いかけ。囁くように。そして沈黙。</td>
+        <td>「あなたは、何を探している。」</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p class="footer-text">BEYOND THE BLUE — WORLD BIBLE V1.0</p>
+  <p class="footer-text" style="margin-top:0.5rem; opacity:0.5;">THE JOURNEY OF AOI — A BLUE MOVER — INTO THE NOLOGIC</p>
+  <p class="footer-text" style="margin-top:0.5rem; opacity:0.3;">CONFIDENTIAL · APRIL 2026</p>
+</footer>
+
+</body>
+</html>
