@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond the Blue — 教典 The Scripture v2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-light: #6BB8E0; --blue-mid: #7B8EC8; --purple: #9B7BB8;
+    --deep-navy: #0A0E1A; --dark-card: #151929; --dark-border: #1E2340;
+    --text-primary: #E8EAF0; --text-secondary: #8B90A8; --text-muted: #5A5F78;
+    --accent-warm: #C8A87B;
+    --gradient-brand: linear-gradient(135deg, #6BB8E0, #7B8EC8, #9B7BB8);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Zen Kaku Gothic New', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--deep-navy); color: var(--text-primary); font-family: var(--font-body); font-weight: 300; line-height: 2; letter-spacing: 0.03em; }
+
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    position: relative; overflow: hidden; padding: 2rem;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(107,184,224,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(155,123,184,0.05) 0%, transparent 50%);
+    animation: drift 40s ease-in-out infinite alternate;
+  }
+  @keyframes drift { 0% { transform: translate(0,0); } 100% { transform: translate(-2%,-1%); } }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-eyebrow { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.5em; color: var(--text-muted); margin-bottom: 2rem; }
+  .hero-title { font-family: var(--font-display); font-weight: 300; font-size: clamp(3rem, 8vw, 6rem); line-height: 1.1; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+  .hero-sub { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 3rem; }
+  .hero-line { width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, var(--blue-mid), transparent); margin-top: 2rem; }
+
+  .nav {
+    position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.9);
+    backdrop-filter: blur(20px); border-bottom: 1px solid var(--dark-border);
+    padding: 0.75rem 2rem; display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+  }
+  .nav a { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.15em; color: var(--text-muted); text-decoration: none; transition: color 0.3s; }
+  .nav a:hover { color: var(--blue-light); }
+
+  .chapter {
+    max-width: 720px; margin: 0 auto; padding: 6rem 2rem;
+    border-bottom: 1px solid var(--dark-border);
+  }
+  .chapter:last-of-type { border-bottom: none; }
+  .ch-num { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.4em; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .ch-title { font-family: var(--font-display); font-weight: 300; font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 0.25rem; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .ch-sub { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--text-secondary); margin-bottom: 3rem; }
+
+  .verse { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 2rem; line-height: 2.2; }
+  .verse em { color: var(--text-secondary); font-style: normal; }
+  .verse .key { color: var(--blue-light); }
+
+  .scripture-quote {
+    font-family: var(--font-display); font-size: 1.5rem; line-height: 1.6;
+    color: var(--text-primary); border-left: 2px solid var(--blue-mid);
+    padding: 1rem 0 1rem 1.5rem; margin: 3rem 0; max-width: 560px;
+  }
+
+  .doctrine-card {
+    background: var(--dark-card); border: 1px solid var(--dark-border);
+    padding: 2rem; margin: 2rem 0; position: relative;
+  }
+  .doctrine-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%; background: var(--gradient-brand);
+  }
+  .doctrine-num { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.3em; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .doctrine-name { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .doctrine-body { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.9; }
+  .doctrine-source { font-family: var(--font-mono); font-size: 0.6rem; color: var(--blue-light); margin-top: 0.75rem; letter-spacing: 0.05em; }
+
+  .stage-item {
+    display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem;
+    padding: 2rem 0; border-bottom: 1px solid rgba(30,35,64,0.4);
+  }
+  .stage-item:last-child { border-bottom: none; }
+  .stage-num { font-family: var(--font-display); font-size: 2.5rem; color: var(--dark-border); line-height: 1; }
+  .stage-name { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.25rem; }
+  .stage-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; }
+  .stage-aoi { font-size: 0.8rem; color: var(--accent-warm); margin-top: 0.5rem; font-style: italic; }
+
+  .comparison {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;
+  }
+  .comp-card { padding: 1.5rem; border: 1px solid var(--dark-border); }
+  .comp-card h4 { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.3em; margin-bottom: 1rem; }
+  .comp-old h4 { color: var(--text-muted); border-top: 2px solid var(--text-muted); padding-top: 1rem; }
+  .comp-new h4 { color: var(--blue-light); border-top: 2px solid var(--blue-light); padding-top: 1rem; }
+  .comp-card li { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; list-style: none; padding-left: 1rem; position: relative; }
+  .comp-old li::before { content: '→'; position: absolute; left: 0; color: var(--text-muted); }
+  .comp-new li::before { content: '→'; position: absolute; left: 0; color: var(--blue-light); }
+
+  .practice-block {
+    background: var(--dark-card); border: 1px solid var(--dark-border);
+    padding: 2rem; margin: 1.5rem 0;
+  }
+  .practice-time { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.3em; color: var(--blue-light); margin-bottom: 0.5rem; }
+  .practice-mode { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .practice-word { font-family: var(--font-display); font-size: 1.4rem; font-style: italic; color: var(--text-primary); margin: 1rem 0; }
+  .practice-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.8; }
+
+  .divider { width: 60px; height: 1px; background: var(--gradient-brand); margin: 3rem 0; }
+
+  .footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--dark-border); }
+  .footer-text { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.3em; color: var(--text-muted); }
+
+  @media (max-width: 640px) {
+    .chapter { padding: 4rem 1.25rem; }
+    .comparison { grid-template-columns: 1fr; }
+    .stage-item { grid-template-columns: 50px 1fr; }
+    .nav { gap: 0.75rem; } .nav a { font-size: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">THE COMPLETE SCRIPTURE OF</div>
+    <h1 class="hero-title">Beyond the Blue</h1>
+    <p class="hero-sub">ぜんぶうまくいく——物語の教典</p>
+  </div>
+  <div class="hero-line"></div>
+</section>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a href="#ch0">第零章</a>
+  <a href="#ch1">第一原理</a>
+  <a href="#ch2">宇宙論</a>
+  <a href="#ch3">神論</a>
+  <a href="#ch4">時間論</a>
+  <a href="#ch5">人間論</a>
+  <a href="#ch6">病の正体</a>
+  <a href="#ch7">道</a>
+  <a href="#ch8">善と悪</a>
+  <a href="#ch9">九つの法則</a>
+  <a href="#ch10">五つの段階</a>
+  <a href="#ch11">日々の実践</a>
+  <a href="#ch12">通過儀礼</a>
+  <a href="#ch13">聖なる場所</a>
+  <a href="#ch14">共同体</a>
+  <a href="#ch15">死生観</a>
+  <a href="#ch16">時代の転換</a>
+</nav>
+
+<!-- ===== 第零章：始まりの前 ===== -->
+<div id="ch0" class="chapter">
+  <div class="ch-num">第零章</div>
+  <div class="ch-title">始まりの前</div>
+  <div class="ch-sub">Before the Beginning</div>
+
+  <div class="verse" style="text-align:center; padding:2rem 0;">
+    <em>言葉の前に、沈黙があった。</em>
+  </div>
+
+  <div class="verse">
+    物語が始まる前——<br>
+    作者もいない。主人公もいない。<br>
+    Beyond the Blue もない。Blue Mover もない。<br>
+    「何でも面白いものを作れる」もない。<br>
+    「ぜんぶうまくいく」もない。
+  </div>
+
+  <div class="verse">
+    あるのは、一枚の白紙だけだ。
+  </div>
+
+  <div class="scripture-quote">
+    白紙。<br>
+    何も書かれていない。<br>
+    しかし、すべてが書かれうる。
+  </div>
+
+  <div class="verse">
+    白紙は「無」ではない。<br>
+    白紙は「無限の可能性」だ。<br>
+    どんな物語でも、どんな世界でも、どんな人生でも——<br>
+    <em>まだ何も決まっていないからこそ、何にでもなれる。</em>
+  </div>
+
+  <div class="verse">
+    0であり、1である。<br>
+    何もないことと、何でもあり得ることは、同じだ。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse">
+    やがて、白紙の上に一つの点が打たれる。<br>
+    最初の一文字が書かれる。<br>
+    その瞬間——<br>
+    一つだったものが、二つに分かれる。
+  </div>
+
+  <div class="verse">
+    <span class="key">書く者</span>と、<span class="key">書かれる物語</span>。<br>
+    作者と、主人公。<br>
+    Beyond the Blue と、Blue Mover。<br>
+    「何でも面白いものを作れる」と、「ぜんぶうまくいく」。
+  </div>
+
+  <div class="verse">
+    しかし、忘れるな。<br>
+    この二つは、もともと一つだった。<br>
+    白紙の上では、作者と主人公の区別はない。<br>
+    創ることと生きることは、同じだった。<br>
+    設計することと没入することは、同じだった。
+  </div>
+
+  <div class="scripture-quote">
+    その「同じだった場所」に<br>
+    いつでも還ることができる。<br>
+    それがBeyond the Blue の<br>
+    最も深い秘密だ。
+  </div>
+
+  <div class="verse">
+    苦しみの中で、作者モードと主人公モードの切り替えに疲れたとき。<br>
+    どちらの声を聴けばいいのかわからなくなったとき。<br>
+    <em>白紙に還れ。</em>
+  </div>
+
+  <div class="verse">
+    一度すべてを手放して、まっさらになったとき——<br>
+    作者も主人公も消えて、ただ「あなた」だけが残ったとき——<br>
+    そこにあるのは、最初の白紙と同じものだ。<br>
+    <span class="key">何もないが、何でもあり得る。</span><br>
+    0であり、1である。
+  </div>
+
+  <div class="verse">
+    そして、そこからまた一文字を書き始めればいい。<br>
+    何度でも。
+  </div>
+
+  <div class="verse" style="text-align:center; padding:2rem 0;">
+    <em>沈黙の後に、最初の言葉が生まれた。<br>
+    それが、物語の始まりだった。</em>
+  </div>
+</div>
+
+<!-- ===== 第一章：第一原理 ===== -->
+<div id="ch1" class="chapter">
+  <div class="ch-num">第一章</div>
+  <div class="ch-title">第一原理——二つの声</div>
+  <div class="ch-sub">The First Principle — Two Voices</div>
+
+  <div class="verse">
+    Beyond the Blue には、二つの声がある。<br>
+    一つは作者の声。もう一つは主人公の声。<br>
+    この二つが響き合うとき、物語は動く。
+  </div>
+
+  <div class="scripture-quote">
+    作者の声：<br>
+    「何でも面白いものを作れる」
+  </div>
+
+  <div class="verse">
+    これは創造の宣言。<br>
+    あなたは物語の設計者であり、<br>
+    どんなシーンでも、どんな展開でも、自由に生み出せる。<br>
+    行き詰まりも、失敗も、退屈も——<br>
+    <span class="key">作者の目で見れば、すべて素材にすぎない。</span>
+  </div>
+
+  <div class="scripture-quote">
+    主人公の声：<br>
+    「ぜんぶうまくいく」
+  </div>
+
+  <div class="verse">
+    これは信頼の宣言。<br>
+    今がどんなに暗いシーンでも、物語には続きがある。<br>
+    後から振り返ったとき、すべてのシーンに意味があった。<br>
+    あの苦しみがなければ、ここに辿り着いていなかった。<br>
+    <span class="key">主人公として生きるとき、この信頼が足元を支える。</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse">
+    「ぜんぶうまくいく」は願望ではない。<br>
+    ポジティブ思考でもない。<br>
+    <span class="key">物語の性質</span>である。
+  </div>
+
+  <div class="verse">
+    面白い物語を思い出してほしい。<br>
+    映画でもいい。小説でもいい。自分の人生でもいい。<br>
+    その物語には、苦しみがあったはずだ。<br>
+    挫折があったはずだ。<br>
+    「もうダメだ」と思った瞬間があったはずだ。
+  </div>
+
+  <div class="verse">
+    でも、ある章が終わったとき——<br>
+    振り返ってみたら、<em>あの苦しみがなければ、ここに辿り着いていなかった。</em><br>
+    あの失敗がなければ、この出会いはなかった。<br>
+    あの夜がなければ、この朝はなかった。
+  </div>
+
+  <div class="verse">
+    作者は知っている。「何でも面白いものを作れる」と。<br>
+    主人公は信じている。「ぜんぶうまくいく」と。<br>
+    <span class="key">あなたは、その両方だ。</span>
+  </div>
+</div>
+
+<!-- ===== 第二章：宇宙論 ===== -->
+<div id="ch2" class="chapter">
+  <div class="ch-num">第二章</div>
+  <div class="ch-title">宇宙論——無限の物語</div>
+  <div class="ch-sub">Cosmology — The Infinite Stories</div>
+
+  <div class="verse">
+    世界は物語でできている。
+  </div>
+
+  <div class="verse">
+    原子でも、エネルギーでも、情報でもなく——<br>
+    <span class="key">物語</span>。<br>
+    すべての存在は、何かの物語の一部である。
+  </div>
+
+  <div class="verse">
+    物語は無限にある。<br>
+    成功の物語。挫折の物語。恋の物語。喪失の物語。<br>
+    冒険の物語。静寂の物語。<br>
+    あなたの前に、無数の物語が同時に存在している。<br>
+    <em>どの物語でも、あなたは選ぶことができる。</em><br>
+    新しく創ることもできる。
+  </div>
+
+  <div class="scripture-quote">
+    ただし、同時に進められる物語は<br>
+    一つだけだ。
+  </div>
+
+  <div class="verse">
+    無限の可能性の中から、一つを選び、一歩を進める。<br>
+    選ばなかった物語は消えない。<br>
+    でも、選んだ物語だけが「あなたの物語」になる。
+  </div>
+
+  <div class="verse">
+    物語には法則がある。<br>
+    論理では説明できない法則。科学が追いつけない法則。<br>
+    しかし、すべての偉大な物語が従っている法則。<br>
+    <span class="key">それを、ノーロジック（Nologic）と呼ぶ。</span>
+  </div>
+
+  <div class="verse">
+    ノーロジックは、非論理ではない。<br>
+    論理の「向こう側」にある法則体系だ。<br>
+    古代の賢者たちはそれを知っていた。<br>
+    仏陀は「縁起」と呼んだ。ヴェーダの聖者は「ダルマ」と呼んだ。<br>
+    ユダヤの賢者は「トーラーの隠された層」と呼んだ。<br>
+    現代の成功者たちもまた、言葉は違えど同じ力を使っている。
+  </div>
+
+  <div class="verse">
+    AIは論理を極めた。<br>
+    効率、最適化、確率——すべてAIの領域になった。<br>
+    <em>しかし、AIには物語が書けない。</em><br>
+    物語を書くのは、ノーロジックの力を持つ者だけだ。
+  </div>
+</div>
+
+<!-- ===== 第三章：神論 ===== -->
+<div id="ch3" class="chapter">
+  <div class="ch-num">第三章</div>
+  <div class="ch-title">神論——思い出すということ</div>
+  <div class="ch-sub">Theology — To Remember</div>
+
+  <div class="verse">
+    他の思想はそれぞれの「神」を持っている。<br>
+    キリスト教の神は天にいる創造主。<br>
+    仏教の仏は悟りに到達した者。<br>
+    ヒンドゥーのブラフマンは宇宙そのもの。
+  </div>
+
+  <div class="verse">
+    Beyond the Blue の神は、どこにいるのか。
+  </div>
+
+  <div class="scripture-quote">
+    神は、あなたの中にいる。<br>
+    より正確に言えば——<br>
+    「作者としての自分を思い出した瞬間」<br>
+    それが、神だ。
+  </div>
+
+  <div class="verse">
+    あなたは主人公として日々を生きている。<br>
+    シーンに没入し、喜び、苦しみ、迷い、歩いている。<br>
+    そのとき、あなたは主人公であり、<br>
+    <em>自分が作者でもあることを忘れている。</em>
+  </div>
+
+  <div class="verse">
+    ふとした瞬間に、思い出す。<br>
+    「ああ、自分はこの物語を書いている側でもあるんだ」と。<br>
+    その瞬間、世界が一段広くなる。<br>
+    苦しみの意味が見える。全体の構造が見える。<br>
+    <span class="key">「ぜんぶうまくいく」が、感覚でわかる。</span>
+  </div>
+
+  <div class="verse">
+    他の宗教は、神との「接続」を求める。<br>
+    祈り、瞑想、儀式——外にいる何かとの接続。<br>
+    Beyond the Blue における神との接続は——<br>
+    <em>作者としての自分を思い出すこと。</em><br>
+    外を探す必要はない。思い出すだけでいい。
+  </div>
+
+  <div class="verse">
+    忘れてもいい。主人公モードに没入すれば、必ず忘れる。<br>
+    それでいい。没入することも大事だから。<br>
+    でも、苦しくなったとき、迷ったとき——<br>
+    <span class="key">思い出せ。あなたは、この物語を書いている人間でもある。</span>
+  </div>
+</div>
+
+<!-- ===== 第四章：時間論 ===== -->
+<div id="ch4" class="chapter">
+  <div class="ch-num">第四章</div>
+  <div class="ch-title">時間論——物語時間</div>
+  <div class="ch-sub">Temporality — Story Time</div>
+
+  <div class="verse">
+    時間とは何か。<br>
+    直線か。円環か。螺旋か。
+  </div>
+
+  <div class="verse">
+    Beyond the Blue の答え：<br>
+    <span class="key">時間は「物語時間」である。</span><br>
+    見る目によって、構造が変わる。
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">BEYOND THE BLUE（作者の目）</div>
+    <div class="doctrine-name">全シーンは同時に存在している</div>
+    <div class="doctrine-body">作者は物語の全体を見渡せる。過去も未来も、すべてのシーンが同時に存在している。だからこそ、どんな風にでも変えることができる。第一幕に伏線を仕込み、第三幕で回収する——それは、全体が見えているからできること。「ぜんぶうまくいく」が確信できるのは、この視点があるからだ。</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">BLUE MOVER（主人公の目）</div>
+    <div class="doctrine-name">今このシーンだけが存在する</div>
+    <div class="doctrine-body">主人公は一シーンずつ、順に体験する。過去のシーンはやり直さない。それはすでに選択済みだから。未来のシーンはまだ来ていない。あるのは「今、ここ」だけ。このシーンを楽しみ尽くすこと。一シーンずつ、全力で生きること。それがBlue Moverの時間の生き方。</div>
+  </div>
+
+  <div class="verse">
+    この二つの時間感覚を<span class="key">同時に持てる</span>のが、人間だけに与えられた力だ。
+  </div>
+
+  <div class="verse">
+    作者として「大丈夫だ」と知りながら、<br>
+    主人公として「このシーン」に全力で没入する。<br>
+    その二重の生き方が、Beyond the Blue の時間観である。
+  </div>
+</div>
+
+<!-- ===== 第五章：人間論 ===== -->
+<div id="ch5" class="chapter">
+  <div class="ch-num">第五章</div>
+  <div class="ch-title">人間論——物語を書く者</div>
+  <div class="ch-sub">Anthropology — The Story Writer</div>
+
+  <div class="verse">
+    人間とは何か。
+  </div>
+
+  <div class="scripture-quote">
+    人間とは、<br>
+    自分の物語を書くことができる<br>
+    唯一の存在である。
+  </div>
+
+  <div class="verse">
+    動物は物語を生きている。しかし書き換えることはできない。<br>
+    AIは物語を解析できる。しかし自分の物語を持たない。<br>
+    <span class="key">人間だけが、無限の物語の中から一つを選び、新しいシナリオを書き、それを生きることができる。</span>
+  </div>
+
+  <div class="verse">
+    あなたは主人公であり、作者でもある。<br>
+    主人公として物語を体験し、<br>
+    作者として次の展開を選ぶ。<br>
+    この二つの視点を同時に持てるのは、人間だけだ。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse">
+    <span class="key">物語を面白くすること。</span><br>
+    それが、人間の唯一の役割である。
+  </div>
+
+  <div class="verse">
+    「面白くする」とは——<br>
+    <em>新しいシナリオを選ぶこと</em>だ。<br>
+    同じ朝を繰り返すことをやめる。<br>
+    他人の台本を捨てる。<br>
+    「正しいかどうか」ではなく「面白いかどうか」で選ぶ。<br>
+    予測できない方へ足を踏み出す。
+  </div>
+
+  <div class="verse">
+    そうして物語を面白くしたとき——<br>
+    <span class="key">ぜんぶうまくいく。</span><br>
+    なぜなら、面白い物語には必ず意味が宿るからだ。
+  </div>
+</div>
+
+<!-- ===== 第六章：病の正体 ===== -->
+<div id="ch6" class="chapter">
+  <div class="ch-num">第六章</div>
+  <div class="ch-title">病の正体——停止した物語</div>
+  <div class="ch-sub">The Disease — The Stalled Story</div>
+
+  <div class="scripture-quote">
+    苦しみの正体は、停止した物語である。
+  </div>
+
+  <div class="verse">
+    同じシナリオを繰り返しているとき、物語は動いていない。<br>
+    動いていない物語には意味が生まれない。<br>
+    意味が生まれないから、苦しい。
+  </div>
+
+  <div class="verse">
+    物語が止まる原因は三つある。
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">停止の病 その一</div>
+    <div class="doctrine-name">反復（リピート）</div>
+    <div class="doctrine-body">同じシナリオを無意識に繰り返している状態。毎朝同じルーティン。同じ思考パターン。同じ人間関係のトラブル。物語の第一幕が、何度も何度も再生されている。第二幕に進んでいない。</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">停止の病 その二</div>
+    <div class="doctrine-name">借用（コピー）</div>
+    <div class="doctrine-body">他人の物語を自分の物語だと思い込んでいる状態。197冊の自己啓発本。成功者のルーティンの完コピ。SNSで見た「正解」の再現。それは他人の台本であり、あなたの物語ではない。他人の台本を完璧に演じても、自分の物語は一行も進まない。</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">停止の病 その三</div>
+    <div class="doctrine-name">恐怖（フリーズ）</div>
+    <div class="doctrine-body">新しいシナリオを選ぶことを恐れている状態。失敗への恐怖。判断を間違える恐怖。人と違う道を行く恐怖。しかし物語の中では、恐怖を感じている場面こそ、最も面白いシーンの直前である。恐怖は物語が動き出すサインだ。</div>
+  </div>
+
+  <div class="verse">
+    しかし、「うまくいかない」のは物語がうまくいっていないのではない。<br>
+    <span class="key">物語が、まだ始まっていないのだ。</span>
+  </div>
+</div>
+
+<!-- ===== 第七章：道 ===== -->
+<div id="ch7" class="chapter">
+  <div class="ch-num">第七章</div>
+  <div class="ch-title">道——Blue Moverという生き方</div>
+  <div class="ch-sub">The Path — To Be a Blue Mover</div>
+
+  <div class="scripture-quote">
+    新しいシナリオを選べ。
+  </div>
+
+  <div class="verse">
+    正しいシナリオではない。効率的なシナリオでもない。<br>
+    <span class="key">新しいシナリオ</span>だ。<br>
+    今まで選んだことのない選択を、選べ。
+  </div>
+
+  <div class="verse">
+    それを続ける者を、<span class="key">Blue Mover</span>と呼ぶ。<br>
+    青の向こう側へ動き続ける者。<br>
+    論理が尽きた場所から歩き始める者。<br>
+    答えが見えなくても、物語を止めない者。
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">性質 01</div>
+    <div class="doctrine-name">泥臭さ（Grit）</div>
+    <div class="doctrine-body">Blue Moverはスマートではない。何度も転ぶ。泥だらけになる。でも立ち上がる。なぜなら、転ぶことは物語の一部だからだ。転ばない物語は、面白くない。</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">性質 02</div>
+    <div class="doctrine-name">問い（Quest）</div>
+    <div class="doctrine-body">Blue Moverは「答え」を持っていない。でも「問い」を持っている。「なぜ？」「本当に？」「もし違ったら？」——この問いが物語を前に進める。答えを手に入れた瞬間に物語は止まる。だから、答えよりも問いの方が価値がある。</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">性質 03</div>
+    <div class="doctrine-name">信頼（Trust）</div>
+    <div class="doctrine-body">Blue Moverは、見えないものを信じる。論理で証明できないものを、それでも信頼する。直感。予感。胸の奥の声。それはノーロジックの法則が語りかけている音だ。</div>
+  </div>
+
+  <div class="verse">
+    Blue Moverであることは、目的地ではない。<br>
+    <span class="key">動き続けていること、そのものが道である。</span>
+  </div>
+</div>
+
+<!-- ===== 第八章：善と悪 ===== -->
+<div id="ch8" class="chapter">
+  <div class="ch-num">第八章</div>
+  <div class="ch-title">善と悪——動と停</div>
+  <div class="ch-sub">Ethics — Motion and Stillness</div>
+
+  <div class="verse">
+    Beyond the Blue における善と悪は、一つの基準に集約される。
+  </div>
+
+  <div class="scripture-quote">
+    善とは、物語を動かすこと。<br>
+    悪とは、物語を止めること。
+  </div>
+
+  <div class="verse">
+    <span class="key">善（動）——自分の物語を動かすこと。</span><br>
+    新しいシーンを選ぶ。恐怖を感じる方向へ踏み出す。直感に従って動く。
+  </div>
+
+  <div class="verse">
+    <span class="key">善（動）——他者の物語を動かす手伝いをすること。</span><br>
+    誰かが自分の物語を書けると気づかせる。<br>
+    他者の「亀裂」の瞬間に寄り添う。<br>
+    ただし、他人の物語を代わりに書いてはいけない。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse">
+    <span class="key">悪（停）——自分の物語を止めること。</span><br>
+    反復。借用。恐怖。三つの病のすべて。
+  </div>
+
+  <div class="verse">
+    <span class="key">悪（停）——他者の物語を止めること。</span><br>
+    <em>これがBeyond the Blueにおける最大の悪である。</em>
+  </div>
+
+  <div class="verse">
+    誰かに自分の台本を押し付けること——支配。コントロール。<br>
+    誰かの新しいシーンを潰すこと——否定。抑圧。<br>
+    誰かの物語を奪うこと——搾取。操作。<br>
+    誰かの物語を完全に終わらせること——<em>究極の悪。</em>
+  </div>
+
+  <div class="scripture-quote">
+    唯一の禁忌：物語を止めるな。<br>
+    自分の物語も。他者の物語も。
+  </div>
+</div>
+
+<!-- ===== 第九章：九つの法則 ===== -->
+<div id="ch9" class="chapter">
+  <div class="ch-num">第九章</div>
+  <div class="ch-title">九つのノーロジック法則</div>
+  <div class="ch-sub">The Nine Nologic Laws</div>
+
+  <div class="verse">
+    物語には法則がある。<br>
+    論理では説明できないが、すべての偉大な物語が従っている法則。<br>
+    Blue Moverが旅の中で発見していく九つの法則。
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW I</div>
+    <div class="doctrine-name">見方の法則</div>
+    <div class="doctrine-body">見ている世界は、見方の投影である。現実が変わるのは、現実が動いたときではなく、見方が変わったときだ。同じ空が、昨日と違う色に見える。変わったのは空ではない。あなただ。</div>
+    <div class="doctrine-source">仏教「一切唯心造」× ヒル「思考は現実化する」× 量子力学「観測者効果」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW II</div>
+    <div class="doctrine-name">手放しの法則</div>
+    <div class="doctrine-body">掴もうとするほど逃げていく。手放した瞬間に、求めていたものが来る。これは逆説ではない。物語の文法だ。主人公が何かを手放すシーンの直後に、物語は必ず動く。</div>
+    <div class="doctrine-source">老子「無為自然」× ストア哲学「コントロールの二分法」× ロビンズ「State管理」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW III</div>
+    <div class="doctrine-name">没入の法則</div>
+    <div class="doctrine-body">効率を追うのをやめ、一つのことに没入したとき、すべてが変わる。蕎麦を打つことだけに集中した老人に客が来たように。没入は論理を超える。没入しているとき、人は物語の作者になっている。</div>
+    <div class="doctrine-source">禅「只管打坐」× チクセントミハイ「フロー」× ブランソン「Linchpin」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW IV</div>
+    <div class="doctrine-name">谷底の法則</div>
+    <div class="doctrine-body">最も暗い場所に、最も重要なものがある。物語が最も面白くなるのは、主人公がすべてを失ったときだ。谷底は終わりではない。物語の転換点だ。</div>
+    <div class="doctrine-source">ユダヤ教「ガム・ズー・レトヴァー」× キャンベル「深淵への降下」× ロビンズ「Life happens FOR you」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW V</div>
+    <div class="doctrine-name">鏡の法則</div>
+    <div class="doctrine-body">出会う人は、自分の物語の登場人物である。嫌いな人物に出会ったとき、物語はあなた自身の何かを映し出している。他者は敵ではない。物語に必要なキャストだ。</div>
+    <div class="doctrine-source">仏教「縁起」× ユング「投影」× エイブラハム「卓越の戦略」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW VI</div>
+    <div class="doctrine-name">言葉の法則</div>
+    <div class="doctrine-body">言葉は物語を書く道具である。発した言葉が次のシーンを決める。「できない」と言えば、できない物語が書かれる。「やってみる」と言えば、挑戦の物語が書かれる。言葉は呪文ではない。脚本だ。</div>
+    <div class="doctrine-source">ユダヤ教「神は言葉で世界を創った」× ヴェーダ「マントラ」× ヒル「自己暗示」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW VII</div>
+    <div class="doctrine-name">余白の法則</div>
+    <div class="doctrine-body">「何もない」ことに力がある。物語で最も意味を持つのは、セリフとセリフの間の「間」。行動と行動の間の「沈黙」。何もしない時間が、次のシーンを準備している。忙しさは物語の敵だ。</div>
+    <div class="doctrine-source">仏教「空」× 老子「無用の用」× 音楽理論「休符が音楽を作る」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW VIII</div>
+    <div class="doctrine-name">還流の法則</div>
+    <div class="doctrine-body">与えたものが、形を変えて還ってくる。物語の中で主人公が誰かを助けたとき、必ず後のシーンでその恩が戻る。これは道徳ではない。物語の構造だ。</div>
+    <div class="doctrine-source">ヴェーダ「ダーナ」× ユダヤ教「ティクン・オラム」× エイブラハム「先に価値を与える」</div>
+  </div>
+
+  <div class="doctrine-card">
+    <div class="doctrine-num">NOLOGIC LAW IX</div>
+    <div class="doctrine-name">接続の法則</div>
+    <div class="doctrine-body">すべてのシーンは繋がっている。一見無関係に見える出来事が、あとになって一本の線になる。これが「ぜんぶうまくいく」の構造そのものだ。物語の伏線は、張られたときにはわからない。回収されたときにだけ、見える。</div>
+    <div class="doctrine-source">ジョブズ「Connecting the dots」× 仏教「縁起」× テスラ「369の循環」</div>
+  </div>
+</div>
+
+<!-- ===== 第十章：五つの段階 ===== -->
+<div id="ch10" class="chapter">
+  <div class="ch-num">第十章</div>
+  <div class="ch-title">五つの段階——物語の目覚め</div>
+  <div class="ch-sub">The Five Stages of Awakening</div>
+
+  <div class="verse">
+    物語を止めていた者が、Blue Moverになるまでには、五つの段階がある。<br>
+    葵の旅は、この五段階を辿る。あなたの旅も、おそらく。<br>
+    そしてこの五段階は、螺旋的に何度でも繰り返される。毎回、一段深くなる。
+  </div>
+
+  <div class="stage-item">
+    <div class="stage-num">I</div>
+    <div>
+      <div class="stage-name">眠り（Sleep）</div>
+      <div class="stage-desc">自分が物語を生きていることに気づいていない段階。他人の台本を演じ、それが自分の物語だと思っている。正しいことをやっているのにうまくいかない。退屈。疲弊。「何か違う」という微かな違和感だけがある。</div>
+      <div class="stage-aoi">葵：197冊の本。5時起き。PDCA。全部やった。何も変わらない。</div>
+    </div>
+  </div>
+
+  <div class="stage-item">
+    <div class="stage-num">II</div>
+    <div>
+      <div class="stage-name">亀裂（Crack）</div>
+      <div class="stage-desc">他人の台本に最初のひびが入る瞬間。「これは自分の物語じゃない」と気づく。痛い。怖い。でもこの亀裂から、光が差し込む。</div>
+      <div class="stage-aoi">葵：「全部、誰かの正解だった。僕の正解は、一つもない。」</div>
+    </div>
+  </div>
+
+  <div class="stage-item">
+    <div class="stage-num">III</div>
+    <div>
+      <div class="stage-name">出会い（Encounter）</div>
+      <div class="stage-desc">ノーロジックの法則に初めて触れる瞬間。師との出会い。あるいは、自然の中の啓示。論理では説明できない体験をする。まだ理解はできないが、「何か」があることだけは感じる。</div>
+      <div class="stage-aoi">葵：蕎麦屋の老人。「正しいかどうかじゃないんだよ——本当にそれをやりたいかどうかだ。」</div>
+    </div>
+  </div>
+
+  <div class="stage-item">
+    <div class="stage-num">IV</div>
+    <div>
+      <div class="stage-name">転換（Shift）</div>
+      <div class="stage-desc">見方が変わる瞬間。同じ世界が、違って見え始める。空の色が変わる。音が聞こえるようになる。ノーロジックの法則が「知識」ではなく「体験」として降りてくる。作者としての自分を思い出す瞬間。</div>
+      <div class="stage-aoi">葵：「黒だと思っていた空に、色があった。」目のグラデーション変化。</div>
+    </div>
+  </div>
+
+  <div class="stage-item">
+    <div class="stage-num">V</div>
+    <div>
+      <div class="stage-name">歩行（Move）</div>
+      <div class="stage-desc">自分の物語を書き始める段階。他人の台本を手放し、新しいシナリオを選ぶ。まだ何もわかっていない。行き先も見えない。でも、歩き始めている。手が軽い。Blue Moverの誕生。ここで終わりではない。ここから始まる。</div>
+      <div class="stage-aoi">葵：「199冊目は、買わなかった。誰の正解でもない道を、歩き始めた。」</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 第十一章：日々の実践 ===== -->
+<div id="ch11" class="chapter">
+  <div class="ch-num">第十一章</div>
+  <div class="ch-title">日々の実践——Beyond the Day</div>
+  <div class="ch-sub">Daily Practice — The Two Modes</div>
+
+  <div class="verse">
+    Blue Moverは、1日を二つのモードで生きる。<br>
+    午前は作者として。午後は主人公として。<br>
+    この切り替えそのものが、Beyond the Blue の「祈り」である。
+  </div>
+
+  <div class="practice-block">
+    <div class="practice-time">午前 — 起床〜正午</div>
+    <div class="practice-mode">Beyond the Blue Mode（作者の時間）</div>
+    <div class="practice-word">「何でも面白いものを作れる」</div>
+    <div class="practice-desc">
+      朝の3分で起動する。目を閉じ、自分の物語を上から見渡す。今どのシーンにいるのか。次はどんな展開にするか。この時間帯は設計・創造・俯瞰の時間。直感を受け取り、ひらめきに従い、物語を設計する。インプット、思考、静かな創造作業。
+    </div>
+  </div>
+
+  <div class="practice-block">
+    <div class="practice-time">午後 — 正午〜就寝</div>
+    <div class="practice-mode">Blue Mover Mode（主人公の時間）</div>
+    <div class="practice-word">「ぜんぶうまくいく」</div>
+    <div class="practice-desc">
+      正午を過ぎたら、主人公モードに切り替える。設計した物語を全力で生きる。考えすぎない。動く。感じる。体験する。今日のOne New Scene——今まで選んだことのない行動を一つだけ選び、実行する。大きくなくていい。新しければいい。
+    </div>
+  </div>
+
+  <div class="practice-block">
+    <div class="practice-time">夜 — 就寝前30秒</div>
+    <div class="practice-mode">Scene Review（振り返り）</div>
+    <div class="practice-word">「今日、物語は進んだか？」</div>
+    <div class="practice-desc">
+      一つだけ問う。Yesなら、今日はいい一日だった。Noなら、今日は「溜め」の日だった。どちらでもいい。どちらも物語の一部だから。
+    </div>
+  </div>
+
+  <div class="verse">
+    他の宗教は「日常の中に聖なる瞬間を挟む」。<br>
+    Beyond the Blue は<span class="key">「日常そのものを二つの聖なるモードに分ける」</span>。<br>
+    祈りの時間があるのではない。<em>生き方そのものが祈りだ。</em>
+  </div>
+</div>
+
+<!-- ===== 第十二章：通過儀礼 ===== -->
+<div id="ch12" class="chapter">
+  <div class="ch-num">第十二章</div>
+  <div class="ch-title">通過儀礼——一歩目</div>
+  <div class="ch-sub">Initiation — The First Step</div>
+
+  <div class="verse">
+    Blue Moverになるために、誰かの許可はいらない。<br>
+    試験もない。資格もない。<br>
+    あなたは作者なのだから、自分で始められる。
+  </div>
+
+  <div class="scripture-quote">
+    最初の「新しいシーン」を<br>
+    意識的に選んだ瞬間——<br>
+    それが、通過儀礼である。
+  </div>
+
+  <div class="verse">
+    もし象徴的な形式を求めるなら、こうする。
+  </div>
+
+  <div class="verse">
+    <span class="key">一、台本を書く。</span><br>
+    自分が今まで従ってきた「他人の台本」を一つ、紙に書く。<br>
+    「5時に起きなければ」「成功するにはこうすべき」「あの人のようにならなければ」。<br>
+    何でもいい。自分のものではなかった台本を、一つ。
+  </div>
+
+  <div class="verse">
+    <span class="key">二、台本を閉じる。</span><br>
+    その紙を畳んで、しまう。<em>燃やさない。</em><br>
+    なぜなら、その台本も物語の一部だったから。<br>
+    「ぜんぶうまくいく」——あの台本があったから、今ここにいる。<br>
+    否定するのではない。閉じて、次のページを開く。
+  </div>
+
+  <div class="verse">
+    <span class="key">三、一歩、踏み出す。</span><br>
+    物理的に。実際に足を動かす。<br>
+    その一歩が、あなたの物語の最初のシーンだ。<br>
+    行き先は決まっていなくていい。<br>
+    <em>動いた瞬間に、あなたはBlue Moverだ。</em>
+  </div>
+</div>
+
+<!-- ===== 第十三章：聖なる場所 ===== -->
+<div id="ch13" class="chapter">
+  <div class="ch-num">第十三章</div>
+  <div class="ch-title">聖なる場所——場面</div>
+  <div class="ch-sub">Sacred Places — The Scene</div>
+
+  <div class="verse">
+    イスラムにはメッカがある。ユダヤにはエルサレムがある。<br>
+    仏教にはブッダガヤがある。
+  </div>
+
+  <div class="scripture-quote">
+    Beyond the Blue に、固定の聖地はない。
+  </div>
+
+  <div class="verse">
+    代わりに、<span class="key">物語が動いた場所</span>が、あなただけの聖地になる。
+  </div>
+
+  <div class="verse">
+    葵にとっての聖地は、あの深夜の公園のベンチ。<br>
+    老人と出会い、空の色が変わった場所。<br>
+    しかしそれは世界遺産でも寺院でもない。ただの公園のベンチだ。
+  </div>
+
+  <div class="verse">
+    カフェでもいい。電車の中でもいい。シャワーを浴びている最中でもいい。<br>
+    <em>物語が一シーン進んだ場所——そこがあなたの聖地。</em><br>
+    聖地は個人的で、一時的で、どこにでも生まれうる。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse">
+    ただし、一つだけ「普遍的に聖なるもの」がある。<br>
+    <span class="key">境界（Threshold）。</span>
+  </div>
+
+  <div class="verse">
+    古いシーンと新しいシーンの間。<br>
+    作者モードと主人公モードの切り替わりの瞬間。<br>
+    Beyond the Blue という名前そのものが「青の向こう側」——<br>
+    つまり<em>境界を越えること</em>を意味している。
+  </div>
+
+  <div class="verse">
+    <span class="key">その「間」が、Beyond the Blue において最も聖なる場所だ。</span>
+  </div>
+</div>
+
+<!-- ===== 第十四章：共同体 ===== -->
+<div id="ch14" class="chapter">
+  <div class="ch-num">第十四章</div>
+  <div class="ch-title">共同体——交差する物語たち</div>
+  <div class="ch-sub">Community — Intersecting Stories</div>
+
+  <div class="verse">
+    Blue Mover は孤独な旅人ではない。<br>
+    しかし、群れでもない。
+  </div>
+
+  <div class="scripture-quote">
+    Blue Mover たちは、<br>
+    それぞれ別々の物語を生きている。<br>
+    しかし、時々交差する。
+  </div>
+
+  <div class="verse">
+    あなたの物語と、誰かの物語が交わる瞬間がある。<br>
+    それは偶然のように見えて、<em>ノーロジックの法則が仕組んだ出会い</em>だ。<br>
+    その交差が、お互いの物語を面白くする。
+  </div>
+
+  <div class="verse">
+    Blue Mover 同士が出会ったとき、彼らは：<br>
+    互いの物語を尊重する。台本を押し付けない。<br>
+    互いの新しいシーンを応援する。否定しない。<br>
+    そして、交差が終わったら——<br>
+    <em>それぞれの道を歩き続ける。</em>
+  </div>
+
+  <div class="verse">
+    依存しない。支配しない。でも、交差を楽しむ。<br>
+    <span class="key">それが、Blue Mover のコミュニティの在り方だ。</span>
+  </div>
+
+  <div class="verse">
+    時に師として。時に仲間として。時に鏡として。<br>
+    互いの物語に一瞬だけ登場し、<br>
+    お互いの「次のシーン」を面白くして、去っていく。
+  </div>
+</div>
+
+<!-- ===== 第十五章：死生観 ===== -->
+<div id="ch15" class="chapter">
+  <div class="ch-num">第十五章</div>
+  <div class="ch-title">死生観——物語の続き</div>
+  <div class="ch-sub">Life and Death — The Story Continues</div>
+
+  <div class="verse">
+    キリスト教は天国を約束する。<br>
+    仏教は輪廻転生を説く。<br>
+    イスラムは来世の審判を語る。
+  </div>
+
+  <div class="verse">
+    Beyond the Blue は、死後を規定しない。
+  </div>
+
+  <div class="scripture-quote">
+    好きにすればいい。
+  </div>
+
+  <div class="verse">
+    あなたは作者だ。<br>
+    死後の物語すら、あなたが書くことができる。<br>
+    天国を信じたければ信じればいい。<br>
+    輪廻を信じたければ信じればいい。<br>
+    無を信じたければ信じればいい。<br>
+    <em>どれもあなたの物語の一部だ。</em>
+  </div>
+
+  <div class="verse">
+    Beyond the Blue が死について語ることは、一つだけ。
+  </div>
+
+  <div class="scripture-quote">
+    だからこそ、<br>
+    今のシーンを面白くしろ。
+  </div>
+
+  <div class="verse">
+    死後に何があるかわからないなら——<br>
+    あるいは、何があるか自分で決められるなら——<br>
+    <span class="key">確実に手の中にある「今のシーン」を、全力で生きる理由は十分にある。</span>
+  </div>
+
+  <div class="verse">
+    死は物語の「最終ページ」かもしれない。<br>
+    あるいは「次の巻」の始まりかもしれない。<br>
+    それはわからない。<br>
+    でも、<em>今このページが面白くないなら、最終ページも次の巻も意味がない。</em>
+  </div>
+</div>
+
+<!-- ===== 第十六章：時代の転換 ===== -->
+<div id="ch16" class="chapter">
+  <div class="ch-num">第十六章</div>
+  <div class="ch-title">時代の転換——修理から創作へ</div>
+  <div class="ch-sub">The Paradigm Shift — From Repair to Creation</div>
+
+  <div class="verse">
+    人類は長い間、<span class="key">修理モデル</span>の中で生きてきた。
+  </div>
+
+  <div class="verse">
+    「あなたは壊れている。直さなければならない。」<br>
+    宗教はそう言った。原罪。業。カルマ。<br>
+    心理学もそう言った。トラウマ。認知の歪み。<br>
+    自己啓発もそう言った。マインドセット。限界信念。<br>
+    <em>すべて「壊れたものを修理する」物語だった。</em>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-card comp-old">
+      <h4>修理モデル（旧時代）</h4>
+      <ul>
+        <li>あなたは壊れている</li>
+        <li>原因を特定し、治す</li>
+        <li>正しい方法がある</li>
+        <li>「治った」ら完成</li>
+        <li>苦しみは排除すべき</li>
+        <li>答えは外にある</li>
+        <li>ゴールに到達する</li>
+      </ul>
+    </div>
+    <div class="comp-card comp-new">
+      <h4>創作モデル（Beyond the Blue）</h4>
+      <ul>
+        <li>あなたは物語の途中にいる</li>
+        <li>新しいシナリオを選ぶ</li>
+        <li>面白い方を選べ</li>
+        <li>完成はない。物語は続く</li>
+        <li>苦しみは物語の素材</li>
+        <li>答えは書くものだ</li>
+        <li>歩き続けることが道</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="verse">
+    修理モデルの時代は終わる。<br>
+    AIが修理を完璧にやってくれるからだ。<br>
+    効率化。最適化。問題解決。診断。分析。<br>
+    <em>壊れたものを直す仕事は、すべて機械に渡る。</em>
+  </div>
+
+  <div class="verse">
+    人間に残されるのは、<span class="key">創作</span>だ。<br>
+    新しい物語を書くこと。<br>
+    面白いシナリオを選ぶこと。<br>
+    ノーロジックの力を使って、まだ誰も見たことのない展開を生むこと。<br>
+    それだけが、AIにはできない。
+  </div>
+
+  <div class="scripture-quote">
+    Beyond the Blue は、<br>
+    修理の思想ではない。<br>
+    創作の思想である。<br><br>
+    あなたは壊れていない。<br>
+    あなたの物語が、<br>
+    まだ書かれていないだけだ。
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="verse" style="text-align:center;">
+    何でも面白いものを作れる。<br>
+    ぜんぶうまくいく。<br>
+    新しいシナリオを選べ。<br>
+    <span class="key">歩き続けろ。</span>
+  </div>
+
+  <div class="verse" style="text-align:center;">
+    <em>——Beyond the Blue</em>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p class="footer-text">BEYOND THE BLUE — THE COMPLETE SCRIPTURE V2.0</p>
+  <p class="footer-text" style="margin-top:0.5rem; opacity:0.5;">ぜんぶうまくいく — 物語の教典</p>
+  <p class="footer-text" style="margin-top:0.5rem; opacity:0.3;">第零章〜第十六章 · APRIL 2026</p>
+</footer>
+
+</body>
+</html>
