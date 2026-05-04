@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond the Blue — 三相タロット / Sansou Tarot</title>
+<meta name="description" content="Beyond the Blueの世界に住む、ひとりの占い師から、あなたへ。三枚のカードが、いま在る場所を映し出す。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-light: #6BB8E0; --blue-mid: #7B8EC8; --purple: #9B7BB8;
+    --deep-navy: #0A0E1A; --dark-card: #151929; --dark-border: #1E2340;
+    --text-primary: #E8EAF0; --text-secondary: #8B90A8; --text-muted: #5A5F78;
+    --accent-warm: #C8A87B;
+    --gradient-brand: linear-gradient(135deg, #6BB8E0, #7B8EC8, #9B7BB8);
+    --gradient-card: linear-gradient(160deg, #151929 0%, #1A1F38 50%, #0A0E1A 100%);
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Zen Kaku Gothic New', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--deep-navy); color: var(--text-primary);
+    font-family: var(--font-body); font-weight: 300;
+    line-height: 1.9; letter-spacing: 0.03em;
+    min-height: 100vh; overflow-x: hidden;
+  }
+
+  /* Ambient drifting starfield */
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .stars::before, .stars::after {
+    content: ''; position: absolute; inset: -50%;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(232,234,240,0.5), transparent),
+      radial-gradient(1px 1px at 70% 80%, rgba(107,184,224,0.4), transparent),
+      radial-gradient(1px 1px at 40% 60%, rgba(155,123,184,0.3), transparent),
+      radial-gradient(2px 2px at 85% 20%, rgba(232,234,240,0.3), transparent),
+      radial-gradient(1px 1px at 10% 80%, rgba(123,142,200,0.4), transparent);
+    background-size: 600px 600px;
+    animation: drift 90s linear infinite;
+  }
+  .stars::after { background-size: 400px 400px; animation-duration: 140s; opacity: 0.5; }
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(-300px, -200px); }
+  }
+
+  /* Cosmic glow */
+  .ambient {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(107,184,224,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(155,123,184,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(123,142,200,0.04) 0%, transparent 60%);
+  }
+
+  main { position: relative; z-index: 2; min-height: 100vh; }
+
+  /* Top bar */
+  .topbar {
+    padding: 1.5rem 2rem; display: flex; justify-content: space-between;
+    align-items: center; position: relative; z-index: 5;
+  }
+  .topbar-mark {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.3em; color: var(--text-muted);
+  }
+  .topbar-back {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.2em; color: var(--text-muted);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .topbar-back:hover { color: var(--blue-light); }
+
+  /* Stage container */
+  .stage {
+    max-width: 920px; margin: 0 auto;
+    padding: 2rem 2rem 6rem;
+    min-height: calc(100vh - 80px);
+  }
+
+  .scene { display: none; animation: sceneIn 0.9s ease both; }
+  .scene.active { display: block; }
+  @keyframes sceneIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Headings */
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.5em; color: var(--text-muted);
+    margin-bottom: 1.5rem; text-align: center;
+  }
+  .title {
+    font-family: var(--font-display); font-weight: 300;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1; text-align: center;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+  .subtitle {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.15rem; color: var(--text-secondary);
+    text-align: center; margin-bottom: 3rem;
+  }
+  .hairline {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--blue-mid), transparent);
+    margin: 2rem auto;
+  }
+
+  /* Intro card */
+  .intro-card {
+    max-width: 560px; margin: 0 auto;
+    padding: 3rem 2.5rem;
+    background: var(--gradient-card);
+    border: 1px solid var(--dark-border);
+    position: relative;
+  }
+  .intro-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%; background: var(--gradient-brand);
+  }
+  .intro-card p {
+    font-size: 1rem; color: var(--text-secondary);
+    line-height: 2.1; margin-bottom: 1.2rem;
+  }
+  .intro-card p:last-child { margin-bottom: 0; }
+  .intro-card .key { color: var(--blue-light); }
+
+  /* Question form */
+  .q-block { max-width: 560px; margin: 3rem auto 0; }
+  .q-label {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.3em; color: var(--text-muted);
+    margin-bottom: 0.75rem; display: block;
+  }
+  .q-input {
+    width: 100%; background: rgba(21,25,41,0.6);
+    border: 1px solid var(--dark-border);
+    color: var(--text-primary); font-family: var(--font-body);
+    font-weight: 300; font-size: 1rem; padding: 1rem 1.25rem;
+    line-height: 1.7; resize: vertical; min-height: 120px;
+    border-radius: 2px; transition: border-color 0.3s;
+  }
+  .q-input:focus { outline: none; border-color: var(--blue-mid); }
+  .q-input::placeholder { color: var(--text-muted); font-style: italic; }
+  .q-hint {
+    font-size: 0.8rem; color: var(--text-muted);
+    margin-top: 0.6rem; font-style: italic;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex; justify-content: center; gap: 1rem;
+    margin-top: 2.5rem; flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    padding: 1rem 2.5rem; cursor: pointer;
+    background: transparent; color: var(--text-primary);
+    border: 1px solid var(--blue-mid);
+    transition: all 0.4s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gradient-brand); opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .btn span { position: relative; z-index: 1; }
+  .btn:hover { border-color: var(--purple); color: white; }
+  .btn:hover::before { opacity: 0.2; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--text-muted); }
+  .btn-ghost { border-color: var(--dark-border); color: var(--text-muted); }
+  .btn-ghost:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+
+  /* Shuffle scene */
+  .shuffle-area {
+    height: 360px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    margin: 2rem 0 1rem;
+  }
+  .shuffle-card {
+    width: 110px; height: 180px;
+    background: var(--gradient-card);
+    border: 1px solid var(--blue-mid);
+    border-radius: 6px; position: absolute;
+    box-shadow: 0 10px 40px rgba(107,184,224,0.15);
+  }
+  .shuffle-card::before {
+    content: ''; position: absolute; inset: 6px;
+    border: 1px solid rgba(107,184,224,0.25);
+    border-radius: 4px;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(107,184,224,0.1) 0%, transparent 70%);
+  }
+  .shuffle-card::after {
+    content: '✦'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 2rem;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    opacity: 0.5;
+  }
+  .shuffle-status {
+    text-align: center; font-family: var(--font-mono);
+    font-size: 0.65rem; letter-spacing: 0.4em;
+    color: var(--text-muted); margin-top: 1rem;
+    min-height: 1.5em;
+  }
+
+  /* Card draw scene */
+  .draw-instruction {
+    text-align: center; color: var(--text-secondary);
+    font-size: 0.95rem; margin-bottom: 2.5rem;
+    font-style: italic; font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+  .draw-progress {
+    text-align: center; font-family: var(--font-mono);
+    font-size: 0.6rem; letter-spacing: 0.3em;
+    color: var(--text-muted); margin-bottom: 2rem;
+  }
+  .draw-progress .pos { color: var(--blue-light); margin: 0 0.4rem; }
+  .deck {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 0.6rem; max-width: 880px; margin: 0 auto;
+    padding: 1rem 0;
+  }
+  .deck-card {
+    width: 64px; height: 104px;
+    background: var(--gradient-card);
+    border: 1px solid var(--blue-mid);
+    border-radius: 4px; cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s;
+    position: relative; flex-shrink: 0;
+  }
+  .deck-card::before {
+    content: ''; position: absolute; inset: 4px;
+    border: 1px solid rgba(107,184,224,0.2);
+    border-radius: 2px;
+  }
+  .deck-card::after {
+    content: '✦'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.1rem;
+    color: var(--blue-light); opacity: 0.5;
+    transition: opacity 0.4s;
+  }
+  .deck-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 12px 30px rgba(107,184,224,0.25);
+    border-color: var(--purple);
+  }
+  .deck-card:hover::after { opacity: 1; }
+  .deck-card.picked { opacity: 0.15; pointer-events: none; transform: translateY(0); }
+
+  /* Reveal scene */
+  .reveal-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; max-width: 820px; margin: 0 auto 3rem;
+  }
+  @media (max-width: 720px) {
+    .reveal-row { grid-template-columns: 1fr; gap: 2rem; }
+  }
+  .position-block { text-align: center; }
+  .position-label {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.4em; color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .position-jp {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1rem; color: var(--blue-light);
+    margin-bottom: 1.2rem;
+  }
+
+  .card-flip {
+    width: 100%; aspect-ratio: 0.62; max-width: 220px;
+    margin: 0 auto; perspective: 1200px; cursor: pointer;
+  }
+  .card-inner {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-flip.flipped .card-inner { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 8px; overflow: hidden;
+  }
+
+  /* Card back */
+  .card-back {
+    background: var(--gradient-card);
+    border: 1px solid var(--blue-mid);
+    box-shadow: 0 8px 30px rgba(107,184,224,0.15);
+  }
+  .card-back::before {
+    content: ''; position: absolute; inset: 8px;
+    border: 1px solid rgba(107,184,224,0.3); border-radius: 4px;
+  }
+  .card-back-mark {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .card-back-mark .star { font-size: 2.5rem; opacity: 0.7; }
+  .card-back-mark .label {
+    font-family: var(--font-mono); font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted); margin-top: 0.6rem;
+    -webkit-text-fill-color: var(--text-muted);
+  }
+
+  /* Card front */
+  .card-front {
+    transform: rotateY(180deg);
+    background: var(--gradient-card);
+    border: 1px solid var(--purple);
+    display: flex; flex-direction: column;
+    padding: 1rem 0.8rem; text-align: center;
+    box-shadow: 0 8px 30px rgba(155,123,184,0.2);
+  }
+  .card-front::before {
+    content: ''; position: absolute; inset: 6px;
+    border: 1px solid rgba(155,123,184,0.3); border-radius: 4px;
+    pointer-events: none;
+  }
+  .card-roman {
+    font-family: var(--font-display); font-size: 0.85rem;
+    color: var(--text-muted); letter-spacing: 0.2em;
+    margin-top: 0.4rem;
+  }
+  .card-glyph {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 300;
+    font-size: 3rem; line-height: 1;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    padding: 0.5rem 0;
+  }
+  .card-glyph.reversed { transform: rotate(180deg); }
+  .card-name-en {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 0.85rem; color: var(--text-secondary);
+    margin-bottom: 0.15rem;
+  }
+  .card-name-jp {
+    font-family: var(--font-display); font-size: 1.05rem;
+    color: var(--text-primary); margin-bottom: 0.4rem;
+  }
+  .card-orientation {
+    font-family: var(--font-mono); font-size: 0.5rem;
+    letter-spacing: 0.3em; color: var(--accent-warm);
+  }
+
+  /* Reading panel */
+  .reading {
+    max-width: 680px; margin: 4rem auto 0;
+    padding: 3rem 2.5rem;
+    background: var(--gradient-card);
+    border: 1px solid var(--dark-border);
+    position: relative;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .reading.visible { opacity: 1; transform: translateY(0); }
+  .reading::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%; background: var(--gradient-brand);
+  }
+  .reading-eyebrow {
+    font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.4em; color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+  .reading-greeting {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.2rem; color: var(--text-secondary);
+    line-height: 1.8; margin-bottom: 2rem;
+  }
+  .reading-passage {
+    font-size: 1rem; color: var(--text-primary);
+    line-height: 2.2; margin-bottom: 2rem;
+  }
+  .reading-passage .key { color: var(--blue-light); }
+  .reading-passage strong {
+    color: var(--accent-warm); font-weight: 400;
+    font-family: var(--font-display); font-style: italic;
+  }
+  .reading-section {
+    margin: 2.5rem 0; padding-left: 1.2rem;
+    border-left: 1px solid var(--dark-border);
+  }
+  .reading-section .pos-label {
+    font-family: var(--font-mono); font-size: 0.55rem;
+    letter-spacing: 0.4em; color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .reading-section .card-mini {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.1rem; color: var(--blue-light);
+    margin-bottom: 0.8rem;
+  }
+  .reading-section .card-mini .rev {
+    font-family: var(--font-mono); font-style: normal;
+    font-size: 0.55rem; letter-spacing: 0.3em;
+    color: var(--accent-warm); margin-left: 0.5rem;
+  }
+  .reading-section p {
+    font-size: 0.95rem; color: var(--text-secondary);
+    line-height: 2; margin-bottom: 0.6rem;
+  }
+  .reading-quote {
+    font-family: var(--font-display); font-size: 1.4rem;
+    line-height: 1.7; color: var(--text-primary);
+    border-left: 2px solid var(--blue-mid);
+    padding: 0.8rem 0 0.8rem 1.5rem;
+    margin: 2.5rem 0; font-style: italic;
+  }
+  .reading-question {
+    font-family: var(--font-display); font-style: italic;
+    font-size: 1.3rem; color: var(--purple);
+    text-align: center; margin: 2.5rem 0 1rem;
+    line-height: 1.7;
+  }
+  .reading-sign {
+    font-family: var(--font-mono); font-size: 0.55rem;
+    letter-spacing: 0.4em; color: var(--text-muted);
+    text-align: right; margin-top: 2rem;
+  }
+
+  /* Footer */
+  .foot {
+    text-align: center; padding: 3rem 2rem 1rem;
+    color: var(--text-muted); font-family: var(--font-mono);
+    font-size: 0.55rem; letter-spacing: 0.3em;
+  }
+
+  /* Loading dots */
+  .dots::after {
+    content: ''; display: inline-block;
+    animation: dots 1.6s steps(4, end) infinite;
+  }
+  @keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '·'; }
+    60% { content: '··'; }
+    80%, 100% { content: '···'; }
+  }
+
+  /* Glow on selected positions */
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(107,184,224,0.4); }
+    50% { box-shadow: 0 0 0 12px rgba(107,184,224,0); }
+  }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="stars"></div>
+
+<main>
+  <header class="topbar">
+    <span class="topbar-mark">BEYOND THE BLUE / 三相タロット</span>
+    <a class="topbar-back" href="./index.html">← 教典へ</a>
+  </header>
+
+  <section class="stage">
+
+    <!-- Scene 1: Welcome -->
+    <div class="scene active" id="scene-welcome">
+      <div class="eyebrow">SANSOU TAROT — 三相</div>
+      <h1 class="title">向こう側の声を、<br>三枚に映す</h1>
+      <p class="subtitle">"The card you draw already knows"</p>
+      <div class="hairline"></div>
+
+      <div class="intro-card">
+        <p>よう来たな。<br>わしは、<span class="key">青の向こう側</span>に座って、ただカードをめくるだけの者じゃ。</p>
+        <p>当てるつもりはない。占うつもりもない。<br>ただ、お主がいま立っている場所を、<span class="key">三枚の絵</span>で映してやるだけじゃ。</p>
+        <p>過ぎ去ったもの。<br>いま在るもの。<br>これから訪れるもの。</p>
+        <p>カードはいつも知っとる。<br>知らんのは、お主のほうじゃ。</p>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">PROMPT — 問いを置いてゆけ</label>
+        <textarea class="q-input" id="question"
+          placeholder="いま気になっていること、聞きたいこと。&#10;言葉にならんものでもよい。一行でも、何行でも。"></textarea>
+        <p class="q-hint">※ 答えはわしが出さん。カードと、お主自身が出す。</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="btn-shuffle"><span>カードを切る</span></button>
+      </div>
+    </div>
+
+    <!-- Scene 2: Shuffle -->
+    <div class="scene" id="scene-shuffle">
+      <div class="eyebrow">SHUFFLING — 切る</div>
+      <h2 class="title" style="font-size: clamp(1.8rem, 4vw, 2.8rem);">息を、ひとつ</h2>
+      <p class="subtitle">問いと一緒に、空に投げる</p>
+
+      <div class="shuffle-area" id="shuffle-area"></div>
+
+      <p class="shuffle-status" id="shuffle-status">
+        <span class="dots">カードが整っている</span>
+      </p>
+    </div>
+
+    <!-- Scene 3: Draw -->
+    <div class="scene" id="scene-draw">
+      <div class="eyebrow">DRAW THREE — 三枚を引く</div>
+      <h2 class="title" style="font-size: clamp(1.8rem, 4vw, 2.8rem);">気になる一枚を、<br>三度</h2>
+      <p class="draw-instruction">考えるな。手が止まったところに、それは在る。</p>
+
+      <p class="draw-progress" id="draw-progress">
+        <span class="pos">過ぎ去ったもの</span> / <span>いま在るもの</span> / <span>訪れるもの</span>
+      </p>
+
+      <div class="deck" id="deck"></div>
+    </div>
+
+    <!-- Scene 4: Reveal -->
+    <div class="scene" id="scene-reveal">
+      <div class="eyebrow">REVELATION — 三相が現れる</div>
+      <h2 class="title" style="font-size: clamp(1.8rem, 4vw, 2.8rem);">三枚の、絵</h2>
+      <p class="subtitle">めくるのは、お主の手で</p>
+
+      <div class="reveal-row" id="reveal-row"></div>
+
+      <div class="reading" id="reading"></div>
+
+      <div class="btn-row" id="restart-row" style="display: none;">
+        <button class="btn btn-ghost" onclick="restart()"><span>もう一度、引く</span></button>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="foot">
+    BEYOND THE BLUE® / SANSOU TAROT — A QUIET DIVINATION
+  </footer>
+</main>
+
+<script>
+/* ============================================================
+   Beyond the Blue — Sansou Tarot
+   22 Major Arcana × Three-card spread (過ぎ去り / いま / 訪れ)
+   Voice: 蕎麦屋の老人（"わし"）
+   ============================================================ */
+
+const ARCANA = [
+  {
+    n: 0, roman: 'O', en: 'The Fool', jp: '愚者', glyph: '✦',
+    up:   { theme: '始まり・無垢・跳躍', body: '荷物を持たんで、空を見て歩く者の絵じゃ。間違うことを恐れとらん。'},
+    rev:  { theme: '迷い・無謀・足踏み', body: '空ばかり見て、足元を踏み外しかけとる絵じゃ。一歩、深呼吸せい。'}
+  },
+  {
+    n: 1, roman: 'I', en: 'The Magician', jp: '魔術師', glyph: 'ⵚ',
+    up:   { theme: '意志・創造・始動', body: '道具はもう揃っとる。あとは、お主が手を伸ばすかどうかだけじゃ。'},
+    rev:  { theme: '空回り・小細工', body: '技に頼りすぎて、肝心の意志が薄まっとる。素手に戻ってみい。'}
+  },
+  {
+    n: 2, roman: 'II', en: 'The High Priestess', jp: '女教皇', glyph: '☽',
+    up:   { theme: '直感・静寂・内なる声', body: 'うるさい外の声より、お主の中で鳴っとる音のほうが正しい。'},
+    rev:  { theme: '不安・思考過多', body: '頭で考えすぎとる。体に聞いてみい。腹のあたりが知っとる。'}
+  },
+  {
+    n: 3, roman: 'III', en: 'The Empress', jp: '女帝', glyph: '✿',
+    up:   { theme: '豊かさ・育み・受容', body: '与える側に回ると、流れが急に滑らかになる時じゃ。'},
+    rev:  { theme: '抱え込み・停滞', body: '自分にだけ厳しすぎる。少し甘やかしてやってもよい時じゃ。'}
+  },
+  {
+    n: 4, roman: 'IV', en: 'The Emperor', jp: '皇帝', glyph: '⌬',
+    up:   { theme: '構造・決断・責任', body: '骨組みを決める時じゃ。曖昧なまま走ると、後で全部崩れる。'},
+    rev:  { theme: '硬直・押し通し', body: '正しさで人を縛りすぎとる。柔らかさは弱さじゃないぞ。'}
+  },
+  {
+    n: 5, roman: 'V', en: 'The Hierophant', jp: '教皇', glyph: '☥',
+    up:   { theme: '伝統・学び・導き', body: '一度、誰かの肩を借りてもよい。素直さは、近道になる。'},
+    rev:  { theme: '常識疲れ・反骨', body: '誰かの正解で、自分の正解を消しとらんか。'}
+  },
+  {
+    n: 6, roman: 'VI', en: 'The Lovers', jp: '恋人', glyph: '✶',
+    up:   { theme: '選択・結合・調和', body: '二つに見えて、本当は同じものじゃ。どちらかを切ろうとせんでよい。'},
+    rev:  { theme: '葛藤・ズレ', body: '頭と心が違う方を向いとる。どちらが嘘かではなく、どちらも本当じゃ。'}
+  },
+  {
+    n: 7, roman: 'VII', en: 'The Chariot', jp: '戦車', glyph: '⤧',
+    up:   { theme: '推進・突破・意志', body: '迷いを置いて、前に出る時じゃ。揺れながらでも、進めば道になる。'},
+    rev:  { theme: '空回り・暴走', body: '速さは出とるが、行き先が決まっとらん。一旦停めて空を見い。'}
+  },
+  {
+    n: 8, roman: 'VIII', en: 'Strength', jp: '力', glyph: '∞',
+    up:   { theme: '内なる強さ・優しさ', body: '本当の力は、押すことではなく、宥めること。荒ぶる獅子をなでる絵じゃ。'},
+    rev:  { theme: '消耗・自己否定', body: '頑張りが、いつの間にか自分を責める棒になっとる。'}
+  },
+  {
+    n: 9, roman: 'IX', en: 'The Hermit', jp: '隠者', glyph: '☆',
+    up:   { theme: '内省・孤独・灯火', body: 'いま少し、ひとりになるとよい。誰かの声を消すと、自分の声が聞こえる。'},
+    rev:  { theme: '閉じこもり・孤立', body: 'ひとりが、孤独に変わっとらんか。一度、外の風を入れい。'}
+  },
+  {
+    n: 10, roman: 'X', en: 'Wheel of Fortune', jp: '運命の輪', glyph: '◯',
+    up:   { theme: '転機・流れ・循環', body: '回り始めとる。あらがうな、乗れ。下に見えるものも、すぐ上にくる。'},
+    rev:  { theme: '逆風・足止め', body: '流れに逆らって泳ごうとしとる。今は浮かぶだけでよい。'}
+  },
+  {
+    n: 11, roman: 'XI', en: 'Justice', jp: '正義', glyph: '⚖',
+    up:   { theme: '均衡・誠実・因果', body: '誠実にしてきたものが、ちゃんと帰ってくる時じゃ。'},
+    rev:  { theme: '偏り・自責', body: '正しさに、自分まで断罪しとらんか。秤は、自分にも甘くせい。'}
+  },
+  {
+    n: 12, roman: 'XII', en: 'The Hanged Man', jp: '吊られた男', glyph: '⌇',
+    up:   { theme: '視点転換・待つ・委ねる', body: '逆さに吊られると、世界の色が違って見える。動かんことが、進むことになる時もある。'},
+    rev:  { theme: '停滞感・もがき', body: '抜けようと暴れるほど、縄は締まる。一度、力を抜いてみい。'}
+  },
+  {
+    n: 13, roman: 'XIII', en: 'Death', jp: '死神', glyph: '✕',
+    up:   { theme: '終わり・脱皮・再生', body: '怖い名じゃが、終わりの絵ではない。<em>古い皮を脱ぐ</em>絵じゃ。'},
+    rev:  { theme: '抵抗・しがみつき', body: '手放したら無くなると思っとる。逆じゃ、握っとるから新しいものが入らん。'}
+  },
+  {
+    n: 14, roman: 'XIV', en: 'Temperance', jp: '節制', glyph: '⌘',
+    up:   { theme: '調和・統合・中道', body: '熱と冷を、別々の器で混ぜとる絵。極端に振れんでよい。真ん中に道がある。'},
+    rev:  { theme: '不調和・焦り', body: 'バランスを崩しとる。一日、何もせん日を作ってよい。'}
+  },
+  {
+    n: 15, roman: 'XV', en: 'The Devil', jp: '悪魔', glyph: '⏧',
+    up:   { theme: '執着・欲・縛り', body: '鎖は、実は緩んどる。自分で握って、縛られたフリをしとるだけかもしれん。'},
+    rev:  { theme: '解放・自覚', body: '気づきが来とる時じゃ。鎖を、そっと床に置いてみい。'}
+  },
+  {
+    n: 16, roman: 'XVI', en: 'The Tower', jp: '塔', glyph: '⌷',
+    up:   { theme: '崩壊・衝撃・解放', body: '崩れるのは、土台が偽物じゃったからじゃ。本物を建て直す前の、ありがたい雷じゃ。'},
+    rev:  { theme: '余震・回復', body: '揺れはまだ残っとるが、最悪は過ぎた。瓦礫の中に、種が落ちとる。'}
+  },
+  {
+    n: 17, roman: 'XVII', en: 'The Star', jp: '星', glyph: '✦',
+    up:   { theme: '希望・癒し・導き', body: '長い嵐の後の、夜空の絵じゃ。<em>青い光</em>が、もう射しとる。'},
+    rev:  { theme: '迷いの夜', body: '雲が厚いだけじゃ。星は、見えなくなっても消えとらん。'}
+  },
+  {
+    n: 18, roman: 'XVIII', en: 'The Moon', jp: '月', glyph: '☾',
+    up:   { theme: '幻・直感・霧', body: '見えとるものが全部じゃない時。霧の中は、足で進むより、感覚で進め。'},
+    rev:  { theme: '霧の晴れ', body: '長く分からんかったものが、輪郭を持ち始める。'}
+  },
+  {
+    n: 19, roman: 'XIX', en: 'The Sun', jp: '太陽', glyph: '☉',
+    up:   { theme: '生命力・喜び・素直', body: '隠す必要のない時じゃ。素直に、嬉しいと言ってよい。'},
+    rev:  { theme: 'くもり・遠慮', body: '陽は射しとるのに、お主が雨戸を閉めとる。'}
+  },
+  {
+    n: 20, roman: 'XX', en: 'Judgement', jp: '審判', glyph: '⌥',
+    up:   { theme: '覚醒・呼び声・赦し', body: 'どこかから、お主を呼んどる声がある。耳を澄ませい。<em>過去への赦し</em>でもある。'},
+    rev:  { theme: '聞き逃し・自責', body: '声は鳴っとるが、お主が聞かんことにしとる。'}
+  },
+  {
+    n: 21, roman: 'XXI', en: 'The World', jp: '世界', glyph: '◎',
+    up:   { theme: '完成・統合・次の扉', body: '一周した。終わりであり、次の輪の始まりでもある。'},
+    rev:  { theme: 'あと一歩', body: '九割まで来とる。あと一歩、踏み込めば景色が変わる。'}
+  }
+];
+
+const POSITIONS = [
+  { id: 'past',    label: 'PAST',    jp: '過ぎ去ったもの', kana: 'sugisarita-mono' },
+  { id: 'present', label: 'PRESENT', jp: 'いま在るもの',   kana: 'ima-aru-mono' },
+  { id: 'future',  label: 'FUTURE',  jp: '訪れるもの',     kana: 'otozureru-mono' }
+];
+
+/* ---- State ---- */
+let state = {
+  question: '',
+  picks: [],          // [{cardIndex, reversed}]
+  step: 0
+};
+
+/* ---- Scene helpers ---- */
+function showScene(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('scene-' + id);
+  target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---- Welcome → Shuffle ---- */
+document.getElementById('btn-shuffle').addEventListener('click', () => {
+  const q = document.getElementById('question').value.trim();
+  state.question = q;
+  state.picks = [];
+  state.step = 0;
+  startShuffle();
+});
+
+/* ---- Shuffle scene ---- */
+function startShuffle() {
+  showScene('shuffle');
+  const area = document.getElementById('shuffle-area');
+  area.innerHTML = '';
+  const N = 8;
+  const els = [];
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement('div');
+    c.className = 'shuffle-card';
+    c.style.transition = 'transform 1.2s ease, opacity 0.6s';
+    area.appendChild(c);
+    els.push(c);
+  }
+
+  const status = document.getElementById('shuffle-status');
+  const messages = [
+    '問いを、空に置く',
+    'カードが、息をする',
+    '青の向こう側がうごく',
+    '三枚が、決まる'
+  ];
+  let mIdx = 0;
+  status.innerHTML = `<span class="dots">${messages[0]}</span>`;
+
+  // Animate cards: scatter → fan → stack
+  function scatter() {
+    els.forEach((c, i) => {
+      const angle = (Math.random() - 0.5) * 60;
+      const x = (Math.random() - 0.5) * 360;
+      const y = (Math.random() - 0.5) * 80;
+      c.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+    });
+  }
+  function fan() {
+    els.forEach((c, i) => {
+      const angle = (i - (N-1)/2) * 8;
+      const x = (i - (N-1)/2) * 18;
+      c.style.transform = `translate(${x}px, 0) rotate(${angle}deg)`;
+    });
+  }
+  function stack() {
+    els.forEach((c, i) => {
+      c.style.transform = `translate(0, 0) rotate(0deg)`;
+    });
+  }
+
+  scatter();
+  setTimeout(() => { fan(); status.innerHTML = `<span class="dots">${messages[1]}</span>`; mIdx = 1; }, 1200);
+  setTimeout(() => { scatter(); status.innerHTML = `<span class="dots">${messages[2]}</span>`; mIdx = 2; }, 2600);
+  setTimeout(() => { stack(); status.innerHTML = `<span class="dots">${messages[3]}</span>`; mIdx = 3; }, 4000);
+  setTimeout(() => { startDraw(); }, 5400);
+}
+
+/* ---- Draw scene ---- */
+function startDraw() {
+  showScene('draw');
+  const deck = document.getElementById('deck');
+  deck.innerHTML = '';
+  // Build a shuffled bag of 22 cards
+  const bag = [...Array(22).keys()];
+  for (let i = bag.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [bag[i], bag[j]] = [bag[j], bag[i]];
+  }
+  bag.forEach((cardIdx) => {
+    const el = document.createElement('div');
+    el.className = 'deck-card';
+    el.dataset.cardIdx = cardIdx;
+    el.addEventListener('click', () => onPick(el, cardIdx));
+    deck.appendChild(el);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const prog = document.getElementById('draw-progress');
+  prog.innerHTML = POSITIONS.map((p, i) => {
+    if (i < state.step) return `<span style="color:var(--text-muted);text-decoration:line-through">${p.jp}</span>`;
+    if (i === state.step) return `<span class="pos">${p.jp}</span>`;
+    return `<span>${p.jp}</span>`;
+  }).join(' / ');
+}
+
+function onPick(el, cardIdx) {
+  if (state.picks.length >= 3) return;
+  el.classList.add('picked');
+  const reversed = Math.random() < 0.4;  // 40% reversed probability
+  state.picks.push({ cardIdx, reversed });
+  state.step = state.picks.length;
+  updateProgress();
+  if (state.picks.length === 3) {
+    setTimeout(() => goReveal(), 700);
+  }
+}
+
+/* ---- Reveal scene ---- */
+function goReveal() {
+  showScene('reveal');
+  const row = document.getElementById('reveal-row');
+  row.innerHTML = '';
+  state.picks.forEach((pick, i) => {
+    const pos = POSITIONS[i];
+    const card = ARCANA[pick.cardIdx];
+    const block = document.createElement('div');
+    block.className = 'position-block';
+    block.innerHTML = `
+      <div class="position-label">${pos.label} · ${String(i+1).padStart(2,'0')}</div>
+      <div class="position-jp">${pos.jp}</div>
+      <div class="card-flip" data-i="${i}">
+        <div class="card-inner">
+          <div class="card-face card-back">
+            <div class="card-back-mark">
+              <span class="star">✦</span>
+              <span class="label">FLIP</span>
+            </div>
+          </div>
+          <div class="card-face card-front">
+            <div class="card-roman">${card.roman}</div>
+            <div class="card-glyph${pick.reversed ? ' reversed' : ''}">${card.glyph}</div>
+            <div class="card-name-en">${card.en}</div>
+            <div class="card-name-jp">${card.jp}</div>
+            <div class="card-orientation">${pick.reversed ? 'REVERSED' : 'UPRIGHT'}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    row.appendChild(block);
+  });
+
+  // Click to flip
+  row.querySelectorAll('.card-flip').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.add('flipped');
+      checkAllFlipped();
+    });
+  });
+
+  // Auto-flip slowly one by one as a soft default
+  const flips = row.querySelectorAll('.card-flip');
+  flips.forEach((f, i) => {
+    setTimeout(() => f.classList.add('flipped'), 1200 + i * 900);
+  });
+  setTimeout(() => checkAllFlipped(), 1200 + flips.length * 900 + 600);
+}
+
+function checkAllFlipped() {
+  const flips = document.querySelectorAll('.card-flip');
+  const all = [...flips].every(f => f.classList.contains('flipped'));
+  if (all) renderReading();
+}
+
+/* ---- Reading composition ---- */
+function renderReading() {
+  const reading = document.getElementById('reading');
+  if (reading.dataset.rendered === '1') return;
+  reading.dataset.rendered = '1';
+
+  const [p1, p2, p3] = state.picks;
+  const c1 = ARCANA[p1.cardIdx], c2 = ARCANA[p2.cardIdx], c3 = ARCANA[p3.cardIdx];
+  const r1 = p1.reversed ? c1.rev : c1.up;
+  const r2 = p2.reversed ? c2.rev : c2.up;
+  const r3 = p3.reversed ? c3.rev : c3.up;
+
+  const hour = new Date().getHours();
+  let timeWord = '今日';
+  if (hour < 5) timeWord = '夜更け';
+  else if (hour < 11) timeWord = '朝';
+  else if (hour < 17) timeWord = '昼';
+  else if (hour < 21) timeWord = '夕方';
+  else timeWord = '夜';
+
+  const greeting = state.question
+    ? `<span class="key">「${escapeHtml(state.question)}」</span><br>……ふむ。${timeWord}のお主の問いに、三枚はこう答えとる。`
+    : `${timeWord}じゃな。問いは置いていかんかったが、それでよい。<br>カードはちゃんと、<span class="key">置かれていない問い</span>のほうを見とる。`;
+
+  // Synthesis lines based on positions
+  const synthesis = composeSynthesis(c1, p1, c2, p2, c3, p3, r1, r2, r3);
+  const closingQuestion = composeClosingQuestion(c2, c3, p2, p3);
+
+  reading.innerHTML = `
+    <div class="reading-eyebrow">READING — 三相の読み</div>
+    <div class="reading-greeting">${greeting}</div>
+
+    <div class="reading-section">
+      <div class="pos-label">PAST · 過ぎ去ったもの</div>
+      <div class="card-mini">${c1.jp} <em style="font-style:normal;color:var(--text-secondary);font-size:0.85rem">/ ${c1.en}</em>${p1.reversed ? '<span class="rev">REVERSED</span>' : ''}</div>
+      <p>${r1.body}</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;font-style:italic;margin-top:0.5rem">— ${r1.theme}</p>
+    </div>
+
+    <div class="reading-section">
+      <div class="pos-label">PRESENT · いま在るもの</div>
+      <div class="card-mini">${c2.jp} <em style="font-style:normal;color:var(--text-secondary);font-size:0.85rem">/ ${c2.en}</em>${p2.reversed ? '<span class="rev">REVERSED</span>' : ''}</div>
+      <p>${r2.body}</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;font-style:italic;margin-top:0.5rem">— ${r2.theme}</p>
+    </div>
+
+    <div class="reading-section">
+      <div class="pos-label">FUTURE · 訪れるもの</div>
+      <div class="card-mini">${c3.jp} <em style="font-style:normal;color:var(--text-secondary);font-size:0.85rem">/ ${c3.en}</em>${p3.reversed ? '<span class="rev">REVERSED</span>' : ''}</div>
+      <p>${r3.body}</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;font-style:italic;margin-top:0.5rem">— ${r3.theme}</p>
+    </div>
+
+    <div class="reading-quote">${synthesis}</div>
+
+    <p class="reading-passage" style="margin-top:1rem">
+      当てるためのカードではない。<br>
+      <strong>映すため</strong>のカードじゃ。<br>
+      お主の中に既に在った答えに、ちょっとだけ光を当てる、それだけの絵。
+    </p>
+
+    <div class="reading-question">${closingQuestion}</div>
+
+    <p class="reading-sign">— わし · BEYOND THE BLUE / 三相タロット</p>
+  `;
+  setTimeout(() => {
+    reading.classList.add('visible');
+    document.getElementById('restart-row').style.display = 'flex';
+  }, 80);
+}
+
+/* Compose poetic synthesis from three cards */
+function composeSynthesis(c1, p1, c2, p2, c3, p3, r1, r2, r3) {
+  const arrows = [
+    `${r1.theme}を後ろに置いたまま、${r2.theme}の中に立っとる。<br>その向こうで、${r3.theme}が、もう手を振っとる。`,
+    `${r1.theme}が一度終わって、${r2.theme}が入り口になっとる。<br>抜けた先には ${r3.theme}じゃ。`,
+    `${r1.theme}── これが、お主が長く背負ってきたものじゃ。<br>${r2.theme}── これが、いまお主の真ん中に在る。<br>${r3.theme}── これが、空の向こうから降りてくる。`
+  ];
+  return arrows[Math.floor(Math.random() * arrows.length)];
+}
+
+/* End with a question (Storytelling Rule #3) */
+function composeClosingQuestion(c2, c3, p2, p3) {
+  const r2 = p2.reversed ? c2.rev : c2.up;
+  const r3 = p3.reversed ? c3.rev : c3.up;
+  const pool = [
+    `── ${r2.theme}を抱えたまま、お主は<br>本当に ${r3.theme} を望んでおるか?`,
+    `── いま、${r2.theme}を<br>少しだけ手放してみたら、何が見える?`,
+    `── ${r3.theme}が訪れるとして、<br>それを受けとる準備は、もう出来とるか?`,
+    `── ${r2.theme}は、嫌なものか?<br>それとも、まだ言葉にならん大事なものか?`,
+    `── 三枚を見終えて、<br>お主の胸の中で、<em style="color:var(--blue-light);font-style:normal">最初に動いた感情</em>は何じゃった?`
+  ];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function restart() {
+  document.getElementById('reading').dataset.rendered = '';
+  document.getElementById('reading').classList.remove('visible');
+  document.getElementById('reading').innerHTML = '';
+  document.getElementById('restart-row').style.display = 'none';
+  document.getElementById('question').value = '';
+  state = { question: '', picks: [], step: 0 };
+  showScene('welcome');
+}
+</script>
+</body>
+</html>
