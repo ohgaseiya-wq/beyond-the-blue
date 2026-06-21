@@ -1,0 +1,28 @@
+{
+  "id": "ep-s01",
+  "_comment": "生成スペック。generate.mjs がこれを読んで keyframe→clip→narration を作り、ep-s01.json の videoSrc/audioSrc を埋める。モデルIDは fal.ai/models で最新を要確認（変動するため）。",
+
+  "models": {
+    "image": "fal-ai/nano-banana/v2",
+    "video": "fal-ai/kling-video/v2/standard/image-to-video"
+  },
+
+  "image": {
+    "prompt": "androgynous young person named Aoi in a worn dark-grey hoodie, faded jeans, dim midnight room, 197 books stacked beside a desk, one unopened cardboard parcel, single cold blue light, cinematic painterly illustration, muted deep-navy and blue palette, quiet meditative mood, soft film grain, 9:16 vertical composition",
+    "imageSize": "portrait_16_9",
+    "referenceImageUrls": [],
+    "_note": "キャラ一貫性のため、確定後は あおいのキャラシート画像URLを referenceImageUrls に固定する（Nano Banana 2 の同一性保持を使う）。"
+  },
+
+  "motion": {
+    "prompt": "the same painting, barely moving: dust drifting in the cold light, the hoodie figure breathing slowly, a hand resting on the unopened book then going still, faint flicker of the blue light. very subtle, slow, contemplative. no camera shake.",
+    "durationSec": 5,
+    "aspectRatio": "9:16"
+  },
+
+  "voice": {
+    "modelId": "eleven_v3",
+    "voiceIdEnv": "ELEVENLABS_VOICE_ID",
+    "text": "正しいこと、全部やった。なのに、何も変わらなかった。百九十七冊、読んだ。線を引いて、ノートにまとめて、五時に起きて。ずっと、追いかけていた。欲しいものほど、遠ざかっていく。なんでだろう。ある夜、百九十八冊目を、開けなかった。手が、止まった。追うのを、やめた、その夜に。手放した瞬間に、来る。"
+  }
+}

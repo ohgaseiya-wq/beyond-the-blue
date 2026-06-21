@@ -1,0 +1,5 @@
+node_modules/
+out/
+.env
+# 生成された素材（画像・動画・音声）はコミットしない。脚本とコードが正本。
+public/assets/
