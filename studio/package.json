@@ -1,0 +1,28 @@
+{
+  "name": "btb-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Beyond the Blue / あおい Reels 制作ライン（Remotion＋fal＋ElevenLabs）。Claude Codeから一気通貫で回す。",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "generate": "node scripts/generate.mjs",
+    "render:ep": "remotion render src/index.ts AoiReel out/ep-s01.mp4 --props=./data/ep-s01.json",
+    "build:ep": "node scripts/build-reel.mjs ep-s01",
+    "make:ep": "node scripts/generate.mjs ep-s01 && node scripts/build-reel.mjs ep-s01",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@fal-ai/client": "^1.2.0",
+    "@types/react": "^18.3.0",
+    "dotenv": "^16.4.0",
+    "typescript": "^5.4.0"
+  }
+}

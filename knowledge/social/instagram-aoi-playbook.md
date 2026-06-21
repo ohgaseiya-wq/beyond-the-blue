@@ -240,6 +240,10 @@ VISION MAP「誰に届くか」と重ねると、解像度が上がる。
 
 ## 7. 反復可能な制作システム（量産の仕組み）
 
+> 🛠 **実装は `studio/` にあり**（Remotion＋fal＋ElevenLabs、Claude Code完結）。
+> 詳細・最新のツール選定は `studio/README.md` と `knowledge/pipeline/production-pipeline.md` を参照。
+> 以下は運用上の考え方のまとめ。
+
 ### 7-1. 1本のパイプライン
 
 ```

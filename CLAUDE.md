@@ -56,8 +56,9 @@
 | `knowledge/book/book-plan.md` | 書籍企画 — 全14章構成・ライティングルール |
 | `knowledge/brand/world-bible-v1.html` | World Bible v1.0 |
 | `knowledge/brand/deliverables.md` | 成果物一覧・ステータス管理 |
-| `knowledge/pipeline/production-pipeline.md` | AI制作パイプライン設計 |
+| `knowledge/pipeline/production-pipeline.md` | AI制作パイプライン設計（Claude Code完結・fal/Remotion構成） |
 | `knowledge/social/instagram-aoi-playbook.md` | フロントInstagram「あおい」運用設計書（量産運用・スターター脚本5本） |
+| `studio/` | Reels制作ライン実装（Remotion＋fal＋ElevenLabs。`studio/README.md`参照） |
 | `knowledge/seo/keyword-strategy.md` | SEOキーワード戦略（7カテゴリ×50KW） |
 | `site/scripture-v2.html` | 教典ページ完全版（GitHub Pages公開中） |
 | `docs/index.html` | GitHub Pages用（scripture-v2のコピー） |
