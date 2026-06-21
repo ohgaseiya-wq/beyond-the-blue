@@ -39,6 +39,12 @@
 | aoi.md | 葵キャラクター設計書 | 完成 | `knowledge/character/aoi.md` |
 | production-pipeline.md | AI制作パイプライン設計 | 完成 | `knowledge/pipeline/production-pipeline.md` |
 
+## SNS・運用
+
+| ファイル | 内容 | ステータス | 所在 |
+|---------|------|-----------|------|
+| instagram-aoi-playbook.md | フロントInstagram「あおい」運用設計書（反復制作・スターター5本・カレンダー） | 完成 | `knowledge/social/instagram-aoi-playbook.md` |
+
 ## 未着手
 
 | タスク | 優先度 |

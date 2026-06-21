@@ -57,6 +57,7 @@
 | `knowledge/brand/world-bible-v1.html` | World Bible v1.0 |
 | `knowledge/brand/deliverables.md` | 成果物一覧・ステータス管理 |
 | `knowledge/pipeline/production-pipeline.md` | AI制作パイプライン設計 |
+| `knowledge/social/instagram-aoi-playbook.md` | フロントInstagram「あおい」運用設計書（量産運用・スターター脚本5本） |
 | `knowledge/seo/keyword-strategy.md` | SEOキーワード戦略（7カテゴリ×50KW） |
 | `site/scripture-v2.html` | 教典ページ完全版（GitHub Pages公開中） |
 | `docs/index.html` | GitHub Pages用（scripture-v2のコピー） |
